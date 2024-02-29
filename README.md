@@ -1,4 +1,4 @@
-# MemolAIzer
+# MemoAIzer
 Tool to automatically convert your voice memos to text and analyze it with ChatGPT.
 It consists of N8N workflows and uses Google Drive to sync and store all processed data.
 
@@ -6,26 +6,29 @@ It consists of N8N workflows and uses Google Drive to sync and store all process
 
 
 ## Part 0: Setup prerequisites
-### Install N8N
+### 0.1 Install N8N
 Install N8N from the official website, or get official docker image from hub (seem easier way).
 
-Set N8N_PAYLOAD_SIZE_MAX env variable to some high value (123456 will be enough), so you can move large files in your N8N flow over the internet.  
+Set N8N_PAYLOAD_SIZE_MAX env variable to some high value (123456 will be enough), so you can move large files in your N8N flow over the internet.
+
 If you use docker image - set this env variable for the container before you run it. Also don't forget to forward the port (default is 5678).
 
-### Start N8N and import workflow
-Start N8N service/container and open web interface (the default is http://localhost:5678)
+### 0.2 Start N8N and import workflow
+Start N8N service/container and open web interface (the default is http://localhost:5678).
+
 At first start it will require you to pass the simple sign up procedure.
-Then create a new workflow, press three dots button at right upper corner, select "Import from File" and select file of Voice memo transcribe flow (voice_memo_transcribe.json) 
+
+Then create a new workflow, press three dots button at right upper corner, select "Import from File" and select file of Voice memo transcribe flow (voice_memo_transcribe.json).
 Save the flow (also you can change its name, if you click on its name "My workflow" in the upper panel).
 
-### Create OpenAI and Google Drive credentials
+### 0.3 Create OpenAI and Google Drive credentials
 Open any Google Drive node (i.e. "New in general folder") and follow instructions on Docs tab to create credentials, that you can use to connect to your Google Drive account.
 
 ![изображение](https://github.com/MrJimm/MemolAIzer/assets/5428408/3944f783-c4ae-4e89-9564-38a8bca25b0e)
 
 After you created Drive credentials, open each Google Drive node and choose it. Do the same for Whisper transcription node to create OpenAI API credentials.
 
-### Create Google Drive folders hierarchy 
+### 0.4 Create Google Drive folders hierarchy 
 Go to your Google Drive and create "memo" folder somewhere. I have the following folder structure. 
 
 ```
@@ -66,22 +69,24 @@ If you need to add new input folder for voice memos - create flow entrance with 
 "text" folders are for text memos. All successful transcriptions are automatically placed in "raw" folder. You also can place there your custom .txt file with text memo for further processing.
 All text analysis results are stored in "processed" folder. This topic is WIP for now. 
 
-### Set up Google Drive folders in flow
+### 0.5 Set up Google Drive folders in flow
 After you created folders, double click on every Google Drive trigger node and reselect your *device* folders that you have created. Click on a dropdown list to the right of "from list" and find your folder by name
+
 ![изображение](https://github.com/MrJimm/MemolAIzer/assets/5428408/57e1f926-1cf9-415f-bf3a-897893d48605)
 
 Go to the "Search if the text memo already exists" node and reselect your "raw" text folder.
 
 Go to the Google Drive node after the "MAKE JSON FILES" and reselect your "raw" text folder. 
 
-### Activate N8N flow
+## Part 1: Transcribe voice memo to text
+
+### 1.1 Activate N8N flow
 Finally activate your flow. You can go then to "Executions" or "All executions" tab to monitor automation activities.
 
-## Part 1: Transcribe voice memo to text
-Activate voice memo transcribe flow in N8N. Memolaizer works with voice memos stored in Google Drive. The flow is triggered when any new file is uploaded to any of the voice/[device] folders (general, watch, etc). To set up automatic upload from your phone/watch see section "How to upload to Drive" below. Also see troubleshooting section if you see no execution is fired while you have new files in *device* folders. You can see executions in the designated tab in N8N interface.
+Memoaizer works with voice memos stored in Google Drive. The flow is triggered when any new file is uploaded to any of the voice/[device] folders (general, watch, etc). To set up automatic upload from your phone/watch see section "How to upload to Drive" below. Also see troubleshooting section if you see no execution is fired while you have new files in *device* folders. You can see executions in the designated tab in N8N interface.
 
 ## Part 2: Analyze text transcriptions with ChatGPT API 
-WIP
+***WIP***
 
 ## How to upload to Drive 
 ### Manually
