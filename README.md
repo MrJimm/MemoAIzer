@@ -106,6 +106,9 @@ Text Memo analysis flow from a text_memo_analysis.json will analyze your text tr
 3. On your Google Drive in your text/processed/ folder create "base" folder (see folders hierarchy in step 0.4)
 4. Launch the flow
 
+### 2.2 Managing text processing prompts
+You can find prompts for text processing inside OpenAI blocks (i.e. "Get keywords"). It is plain text, and I suggest to read it to understand how exactly it asks ChatGPT to process your text memos. You can change this prompts and add new branches with custom processing prompts. Though I plan to introduce a more convenient way to add custom text processing flows in further updates.
+
 ## How to upload to Drive 
 ### Manually
 It is what it is:) Just place voice memo file it in the specific (i.e. "general") folder.
