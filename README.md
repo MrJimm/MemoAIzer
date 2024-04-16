@@ -47,6 +47,7 @@ Go to your Google Drive and create "memo" folder somewhere. I have the following
   |── text
       |── raw
       |── processed
+        |── base
 ```
 
 #### Voice
@@ -86,7 +87,24 @@ Finally activate your flow. You can go then to "Executions" or "All executions" 
 Memoaizer works with voice memos stored in Google Drive. The flow is triggered when any new file is uploaded to any of the voice/[device] folders (general, watch, etc). To set up automatic upload from your phone/watch see section "How to upload to Drive" below. Also see troubleshooting section if you see no execution is fired while you have new files in *device* folders. You can see executions in the designated tab in N8N interface.
 
 ## Part 2: Analyze text transcriptions with ChatGPT API 
-***WIP***
+Text Memo analysis flow from a text_memo_analysis.json will analyze your text transcriptions with ChatGPT API. The base processing for each memo are: 
+
+1. XML with two titles and keywords, 
+2. Original text, formatted and cleaned
+3. Summary of the note in the original language
+4. Summary of the note in English
+5. Copy of the original text of the transcription
+
+### 2.1 Load text analysis flow from the file
+1. Load text memo analysis flow from the text_memo_analysis.json.
+2. For evey Google Drive and OpenAI API block set-up credentials as you did above.
+
+![изображение](https://github.com/MrJimm/MemoAIzer/assets/5428408/928452cf-32fc-4f77-9756-7071024ec45c)
+
+(red exclamation mark signs near Google Drive and OpenAI blocks highlights where you should set up credentials)
+
+3. On your Google Drive in your text/processed/ folder create "base" folder (see folders hierarchy in step 0.4)
+4. Launch the flow
 
 ## How to upload to Drive 
 ### Manually
@@ -104,3 +122,4 @@ Then all recordings will sync in the folder /storage/emulated/0/Recordings/Sound
 1. If you have unprocessed memo files in your upload folder, but N8N don't fire execution - try to stop flow, start it, and only then remove one of the new files from the folder on Drive and place it back. Seems, that sometimes triggers on new files works if these files were placed only after the N8N flow was started.
 2. If you want to test the flow, but have any of your *device* folders empty, then you may encounter that hitting "test workflow" on voice memo transcription flow leads to error. Try to disconnect temporarily starting "trigger" brunches of empty folders. Or you can fetch test data if you open the node (by double clicking on it).
 3. Though voice transcription flow shuffles new unprocessed files, sometimes flow can stuck on "bad" file. For this I occasionaly check execution status and if I notice such problematic file, I manually move it to specific "*_error" folders, that I created in my "voice" folder.
+4. If your text memo processing flow does nothing after you started it, try to delete and then add manually any text file in "processed" folder. This should pull the right trigger in the flow. 
