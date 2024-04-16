@@ -104,7 +104,18 @@ Text Memo analysis flow from a text_memo_analysis.json will analyze your text tr
 (red exclamation mark signs near Google Drive and OpenAI blocks highlights where you should set up credentials)
 
 3. On your Google Drive in your text/processed/ folder create "base" folder (see folders hierarchy in step 0.4)
-4. Launch the flow
+4. Reselect your "base" folder in both "Get all items in processed base folder" and "Create output folder" nodes
+   
+![изображение](https://github.com/MrJimm/MemoAIzer/assets/5428408/cd5f5b98-b223-47fa-a3ef-e9f3b138f472)
+
+
+6. Reselect "raw" folder in "Get all items in input folder" node
+   
+![изображение](https://github.com/MrJimm/MemoAIzer/assets/5428408/c949cf55-7436-4a5b-b75c-e6731a02a02f)
+
+
+
+7. Launch the flow
 
 ### 2.2 Managing text processing prompts
 You can find prompts for text processing inside OpenAI blocks (i.e. "Get keywords"). It is plain text, and I suggest to read it to understand how exactly it asks ChatGPT to process your text memos. You can change this prompts and add new branches with custom processing prompts. Though I plan to introduce a more convenient way to add custom text processing flows in further updates.
