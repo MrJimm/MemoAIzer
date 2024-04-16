@@ -1,0 +1,1120 @@
+{
+  "name": "Text analysis",
+  "nodes": [
+    {
+      "parameters": {
+        "operation": "text",
+        "destinationKey": "text",
+        "options": {}
+      },
+      "id": "95065ebc-8288-4664-b4df-68272ca6c2e5",
+      "name": "Get text",
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        780,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "chat",
+        "chatModel": "gpt-3.5-turbo-16k-0613",
+        "prompt": {
+          "messages": [
+            {
+              "content": "=You are a digital assistant who helps me structure the transcriptions of my audio notes. Create two short titles for the following note, fully conveying its essence. Do not miss any small semantic details. After that, write a list of key words (tags) for it.\nWrite the response in the original language of the note, in an XML format containing the following fields:\n<title1> title 1 </title1>\n<title2> title 2 </title2>\n<keywords> list of key words and phrases, separated by commas </keywords>\nReturn only the XML in your response message.\nNote text:\n{{ $json.text }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "583cf9bb-3a4d-41f2-84fa-02fe09826918",
+      "name": "Get titile and keywords",
+      "type": "n8n-nodes-base.openAi",
+      "typeVersion": 1.1,
+      "position": [
+        1100,
+        420
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "chat",
+        "chatModel": "gpt-4-turbo-preview",
+        "prompt": {
+          "messages": [
+            {
+              "content": "=You are a digital assistant who helps me structure the transcriptions of my audio notes. Write a brief summary of my next note, capturing its essence completely. Don't miss any small meaningful details. Avoid adding unnecessary abstract linguistic constructions, lengthy reflections, formalisms, and bureaucratese. I want to use this summary to share my ideas with others, conveying the essence to them. But don't worry about censorship - I will review the text before deciding to share it publicly. Format the text so that I can present it as my own thought. Pay special attention to ensuring that your summary does not distort the meaning of the original text's thoughts, and be careful not to miss a single thought. Provide result in the language of the original note.\nNote text:\n{{ $json.text }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "58a5081c-1773-4e49-a5c1-b7b0596197ab",
+      "name": "Get summary",
+      "type": "n8n-nodes-base.openAi",
+      "typeVersion": 1.1,
+      "position": [
+        1100,
+        620
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "chat",
+        "chatModel": "gpt-4-turbo-preview",
+        "prompt": {
+          "messages": [
+            {
+              "content": "=You are a digital assistant who helps me structure the transcriptions of my audio notes. Proofread, tidy up, and reformat the original text of the note I will write at the end. Remove filler words, correct awkward text constructions. However, preserve the meaning and all ideas of the text to the fullest extent, down to the smallest detail. Don't miss any small semantic detail. Do not add unnecessary abstract linguistic constructions, lengthy reasoning, formalism, or bureaucratese. Don't worry about censorship - I will check the text before deciding to share it publicly. Pay special attention to ensuring that your summary does not distort the meaning of the original text, but also make sure not to miss any thoughts. In your response, return only the proofread and formatted text. Provide the result in the language of the original note.\nNote text:\n{{ $('Get text').item.json[\"text\"] }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "c1028e96-2b2d-4a4c-af56-ab45bddbeb15",
+      "name": "Get clean text",
+      "type": "n8n-nodes-base.openAi",
+      "typeVersion": 1.1,
+      "position": [
+        1100,
+        780
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $('Essential item data').item.json[\"id\"] }}",
+          "mode": "id"
+        },
+        "options": {
+          "binaryPropertyName": "data"
+        }
+      },
+      "id": "bbe1bc21-4602-427d-811a-af5a35ded7ac",
+      "name": "Download transcription",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        1780,
+        160
+      ],
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fields": {
+          "values": [
+            {
+              "name": "output_folder_name",
+              "stringValue": "={{ $json.base_folder_name }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "f64c2f6f-b268-4faa-8655-a58b5927c75a",
+      "name": "Set output folder name",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.2,
+      "position": [
+        1380,
+        -200
+      ]
+    },
+    {
+      "parameters": {
+        "fields": {
+          "values": [
+            {
+              "name": "output_folder_id",
+              "stringValue": "={{ $json.id }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "0d7aee2a-36b9-44d8-9e2a-179ed3810ecc",
+      "name": "Set output folder id",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.2,
+      "position": [
+        1840,
+        -80
+      ]
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "triggerOn": "specificFolder",
+        "folderToWatch": {
+          "__rl": true,
+          "value": "",
+          "mode": "list",
+          "cachedResultName": "raw",
+          "cachedResultUrl": ""
+        },
+        "event": "fileCreated",
+        "options": {}
+      },
+      "id": "dca84da8-bcf4-4e22-bc79-60d2ad6eb1d7",
+      "name": "Google Drive Trigger",
+      "type": "n8n-nodes-base.googleDriveTrigger",
+      "typeVersion": 1,
+      "position": [
+        -440,
+        -180
+      ],
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "fileFolder",
+        "returnAll": true,
+        "filter": {
+          "folderId": {
+            "__rl": true,
+            "value": "",
+            "mode": "list",
+            "cachedResultName": "base",
+            "cachedResultUrl": ""
+          },
+          "whatToSearch": "folders"
+        },
+        "options": {}
+      },
+      "id": "1c6b1167-341a-4784-930a-500c25386cb3",
+      "name": "Get all items in processed base folder",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -120,
+        -280
+      ],
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "fileFolder",
+        "returnAll": true,
+        "filter": {
+          "folderId": {
+            "__rl": true,
+            "value": "",
+            "mode": "list",
+            "cachedResultName": "raw",
+            "cachedResultUrl": ""
+          }
+        },
+        "options": {}
+      },
+      "id": "92e1c9bd-b13b-4a67-8575-6469fedf2293",
+      "name": "Get all items in input folder",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -120,
+        -60
+      ],
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "mergeByFields": {
+          "values": [
+            {
+              "field1": "name",
+              "field2": "name"
+            }
+          ]
+        },
+        "joinMode": "keepNonMatches",
+        "outputDataFrom": "input2",
+        "options": {}
+      },
+      "id": "004c9698-49b7-4ad2-89bf-a4f02f7fdd40",
+      "name": "Selet new",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 2.1,
+      "position": [
+        120,
+        -160
+      ]
+    },
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "id",
+              "value": "={{ $json.id }}"
+            },
+            {
+              "name": "name",
+              "value": "={{ $json.name }}"
+            },
+            {
+              "name": "base_folder_name",
+              "value": "={{ $json.name }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "cb083e3b-a58d-4bbd-a291-24c42a4dd376",
+      "name": "Essential item data",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 2,
+      "position": [
+        300,
+        -160
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "sort",
+        "type": "random"
+      },
+      "id": "9c705650-3012-4757-8bc4-595d9c263e9f",
+      "name": "Item Lists",
+      "type": "n8n-nodes-base.itemLists",
+      "typeVersion": 3,
+      "position": [
+        500,
+        -160
+      ]
+    },
+    {
+      "parameters": {
+        "batchSize": 1,
+        "options": {
+          "reset": false
+        }
+      },
+      "id": "f9d46389-d978-4697-a8ce-0b4169a2cc75",
+      "name": "Batch of several to transcribe",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 2,
+      "position": [
+        720,
+        -160
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "b0673ce5-70b6-40be-a1b8-314a974d8297",
+      "name": "End",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1240,
+        100
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "chat",
+        "chatModel": "gpt-4-turbo-preview",
+        "prompt": {
+          "messages": [
+            {
+              "content": "=You are a digital assistant who helps me structure the transcriptions of my audio notes. Write a short summary in English for the following note of mine, capturing its essence completely. Do not omit any minor semantic details. Avoid unnecessary abstract language constructions, lengthy discussions, formalism, and bureaucratese. I want to use this summary to share my ideas with others, conveying the essence. However, don't worry about censorship - I will review the text before deciding to share it publicly. Format the text so that I can present it as my own thought. Pay particular attention to ensuring that your summary does not distort the meaning of the original text's thoughts, but also ensure that no thought is missed.\nNote text:\n{{ $json.text }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "c49e4761-5e24-43f1-a676-7902b3c6f2a6",
+      "name": "Get english summary",
+      "type": "n8n-nodes-base.openAi",
+      "typeVersion": 1.1,
+      "position": [
+        1100,
+        940
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "folder",
+        "name": "={{ $('Set output folder name').item.json[\"output_folder_name\"] }}",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "",
+          "mode": "list",
+          "cachedResultName": "base",
+          "cachedResultUrl": ""
+        },
+        "options": {}
+      },
+      "id": "180df0ee-a393-4613-9ad3-4de5862e58e0",
+      "name": "Create output folder",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        1640,
+        -100
+      ],
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "name": "={{ $('Essential item data').item.json[\"name\"] }}_titlekw.txt",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "={{ $('Create output folder').item.json[\"id\"] }}",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "id": "e36ef888-f657-4f5f-bf1c-bd64a2661d53",
+      "name": "Save file",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        1540,
+        420
+      ],
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "jsonToBinary",
+        "convertAllData": false,
+        "sourceKey": "=message.content",
+        "options": {
+          "fileName": "=base_titlekw.txt",
+          "useRawData": true
+        }
+      },
+      "id": "5f5304d3-e0e2-453b-a392-89e4a1a7a742",
+      "name": "make txt file",
+      "type": "n8n-nodes-base.moveBinaryData",
+      "position": [
+        1340,
+        420
+      ],
+      "notesInFlow": true,
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "mode": "jsonToBinary",
+        "convertAllData": false,
+        "sourceKey": "=message.content",
+        "options": {
+          "fileName": "=base_summary.txt",
+          "useRawData": true
+        }
+      },
+      "id": "caaf8a0f-3731-44cf-8cf2-7550e2e68fda",
+      "name": "make txt file1",
+      "type": "n8n-nodes-base.moveBinaryData",
+      "position": [
+        1340,
+        620
+      ],
+      "notesInFlow": true,
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "name": "={{ $('Essential item data').item.json[\"name\"] }}_summary.txt",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "={{ $('Create output folder').item.json[\"id\"] }}",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "id": "2308bac8-b82a-4f3d-9153-a9bdc5027cb3",
+      "name": "Save file1",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        1540,
+        620
+      ],
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "jsonToBinary",
+        "convertAllData": false,
+        "sourceKey": "=message.content",
+        "options": {
+          "fileName": "=base_clean.txt",
+          "useRawData": true
+        }
+      },
+      "id": "2be80bf2-e01e-430f-89f2-84a8202105c2",
+      "name": "make txt file2",
+      "type": "n8n-nodes-base.moveBinaryData",
+      "position": [
+        1340,
+        780
+      ],
+      "notesInFlow": true,
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "name": "={{ $('Essential item data').item.json[\"name\"] }}_cleantext.txt",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "={{ $('Create output folder').item.json[\"id\"] }}",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "id": "2ac1c3f1-b0b2-4d8f-adb7-28239c84a298",
+      "name": "Save file2",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        1540,
+        780
+      ],
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "jsonToBinary",
+        "convertAllData": false,
+        "sourceKey": "=message.content",
+        "options": {
+          "fileName": "=base_engsummary.txt",
+          "useRawData": true
+        }
+      },
+      "id": "fbfb0bec-624c-42a6-9a45-97b2ce344fce",
+      "name": "make txt file3",
+      "type": "n8n-nodes-base.moveBinaryData",
+      "position": [
+        1340,
+        940
+      ],
+      "notesInFlow": true,
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "name": "={{ $('Essential item data').item.json[\"name\"] }}_engsummary.txt",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "={{ $('Create output folder').item.json[\"id\"] }}",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "id": "4a5820bd-aae1-40a7-babd-297b03ce324e",
+      "name": "Save file3",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        1540,
+        940
+      ],
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "id": "10e3e1ff-01d4-4ffa-a2a3-81c7c1751af2",
+      "name": "Merge",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 2.1,
+      "position": [
+        1860,
+        600
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "2fe4c918-bb24-4746-94eb-d7c09923694a",
+      "name": "Merge1",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 2.1,
+      "position": [
+        1860,
+        840
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "3b5763ba-1372-45f1-90b4-0265577bf667",
+      "name": "Merge2",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 2.1,
+      "position": [
+        2200,
+        960
+      ]
+    },
+    {
+      "parameters": {
+        "amount": 0.1,
+        "unit": "minutes"
+      },
+      "id": "da0bc35e-18b5-43e1-b697-31993bc14bd1",
+      "name": "Wait",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1,
+      "position": [
+        2620,
+        1120
+      ],
+      "webhookId": "82987932-3514-4620-9b47-a2245dbad2de"
+    },
+    {
+      "parameters": {
+        "name": "={{ $('Essential item data').item.json[\"name\"] }}_original.txt",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "={{ $('Create output folder').item.json[\"id\"] }}",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "id": "e83be425-9f35-4274-802f-8b6d560a7fc0",
+      "name": "Save file4",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        1540,
+        1120
+      ],
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "jsonToBinary",
+        "convertAllData": false,
+        "sourceKey": "=text",
+        "options": {
+          "fileName": "=base_original.txt",
+          "useRawData": true
+        }
+      },
+      "id": "50313b5f-b50a-462d-8274-caf1ff9882e7",
+      "name": "make original file",
+      "type": "n8n-nodes-base.moveBinaryData",
+      "position": [
+        1100,
+        1120
+      ],
+      "notesInFlow": true,
+      "typeVersion": 1
+    },
+    {
+      "parameters": {},
+      "id": "802ac296-f3eb-4166-9e89-3d6a9b1cf9be",
+      "name": "Merge3",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 2.1,
+      "position": [
+        2440,
+        1040
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Get text": {
+      "main": [
+        [
+          {
+            "node": "Get titile and keywords",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Get summary",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Get clean text",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Get english summary",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "make original file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download transcription": {
+      "main": [
+        [
+          {
+            "node": "Get text",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set output folder name": {
+      "main": [
+        [
+          {
+            "node": "Create output folder",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set output folder id": {
+      "main": [
+        [
+          {
+            "node": "Download transcription",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Drive Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get all items in processed base folder",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Get all items in input folder",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get all items in processed base folder": {
+      "main": [
+        [
+          {
+            "node": "Selet new",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get all items in input folder": {
+      "main": [
+        [
+          {
+            "node": "Selet new",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Selet new": {
+      "main": [
+        [
+          {
+            "node": "Essential item data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Essential item data": {
+      "main": [
+        [
+          {
+            "node": "Item Lists",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Item Lists": {
+      "main": [
+        [
+          {
+            "node": "Batch of several to transcribe",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Batch of several to transcribe": {
+      "main": [
+        [
+          {
+            "node": "Set output folder name",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "End",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get titile and keywords": {
+      "main": [
+        [
+          {
+            "node": "make txt file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create output folder": {
+      "main": [
+        [
+          {
+            "node": "Set output folder id",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "make txt file": {
+      "main": [
+        [
+          {
+            "node": "Save file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get summary": {
+      "main": [
+        [
+          {
+            "node": "make txt file1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "make txt file1": {
+      "main": [
+        [
+          {
+            "node": "Save file1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get clean text": {
+      "main": [
+        [
+          {
+            "node": "make txt file2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "make txt file2": {
+      "main": [
+        [
+          {
+            "node": "Save file2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get english summary": {
+      "main": [
+        [
+          {
+            "node": "make txt file3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "make txt file3": {
+      "main": [
+        [
+          {
+            "node": "Save file3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Save file": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Save file1": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Save file2": {
+      "main": [
+        [
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Save file3": {
+      "main": [
+        [
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Merge2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge1": {
+      "main": [
+        [
+          {
+            "node": "Merge2",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge2": {
+      "main": [
+        [
+          {
+            "node": "Merge3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Batch of several to transcribe",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "make original file": {
+      "main": [
+        [
+          {
+            "node": "Save file4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Save file4": {
+      "main": [
+        [
+          {
+            "node": "Merge3",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge3": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "363ea8e3-54f0-4b03-9a65-2c6243c12929",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "beb9879bc8cb5f19791047ba677ad81dfc94de5ec373473f419d6c5d1657b0fd"
+  },
+  "id": "XCs7MRsTpJxTc7cu",
+  "tags": []
+}
