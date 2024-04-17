@@ -4,7 +4,7 @@ It consists of N8N workflows and uses Google Drive to sync and store all process
 
 ![изображение](https://github.com/MrJimm/MemolAIzer/assets/5428408/63926911-90f7-4bc6-917e-901c57615ad9)
 
-# TL;DL
+# TL;DR
 1. Install n8n ([docker](https://docs.n8n.io/hosting/installation/docker/)).
 2. Import workflows from json files.
 3. Set up credentials for Google Drive and OpenAI.
