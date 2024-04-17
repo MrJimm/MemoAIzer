@@ -9,7 +9,7 @@ It consists of N8N workflows and uses Google Drive to sync and store all process
 2. Import workflows from json files.
 3. Set up credentials for Google Drive and OpenAI.
 4. Create necessary folders on Google Drive (see details in section 0.4 below).
-5. Reconnect folders in Google Drive nodes to the folders created in step 4 (see details below).
+5. Reconnect folders in Google Drive nodes to the folders created in step 4 (see sections 0.4, 0.5, 2.1).
 6. Start flows.
 7. Place some data in input folders and observe.
 
