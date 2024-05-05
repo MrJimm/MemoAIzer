@@ -1,6 +1,1229 @@
 {
-  "name": "My workflow",
+  "name": "Voice memo transcribe autoinit",
   "nodes": [
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $('Essential item data').item.json[\"id\"] }}",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "id": "e40a883e-14c6-4012-99f4-384cfa5e1925",
+      "name": "Download audio",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        4060,
+        880
+      ],
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "JZG3EdgBt5WkZN0v",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "textMemoName",
+              "value": "={{ $('Essential item data').item.json[\"name\"] }}.txt"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "050fe6fb-b152-4b09-9ca5-14ed89575a15",
+      "name": "Set text memo file name",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 2,
+      "position": [
+        3080,
+        560
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{ $json.name }}",
+              "value2": "={{ $('Set text memo file name').item.json[\"textMemoName\"] }}"
+            }
+          ]
+        }
+      },
+      "id": "6445b498-daf0-40c9-9ca5-32f0cd5e9f41",
+      "name": "filter out non-exact matches",
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 1,
+      "position": [
+        3500,
+        560
+      ],
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{ $json.name }}",
+              "operation": "isNotEmpty"
+            }
+          ]
+        }
+      },
+      "id": "e936aa8f-c0f5-4249-9a7a-d76566ccc063",
+      "name": "IF text memo found",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        3840,
+        760
+      ],
+      "executeOnce": true,
+      "alwaysOutputData": false
+    },
+    {
+      "parameters": {
+        "amount": 0.1,
+        "unit": "minutes"
+      },
+      "id": "f82d0eef-6e2b-4f8d-8ce5-cf1d4ad4788c",
+      "name": "Wait",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1,
+      "position": [
+        5040,
+        1020
+      ],
+      "webhookId": "2ce5b017-87ad-4643-afae-e5f662d11f5d"
+    },
+    {
+      "parameters": {
+        "resource": "fileFolder",
+        "returnAll": true,
+        "filter": {
+          "folderId": {
+            "__rl": true,
+            "value": "={{ $('Input voice folder essentials').item.json[\"id\"] }}",
+            "mode": "id"
+          }
+        },
+        "options": {}
+      },
+      "id": "d9887c93-d3e1-47d7-8734-aa006704c26b",
+      "name": "Get all items in input folder",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        1980,
+        720
+      ],
+      "alwaysOutputData": true,
+      "executeOnce": true,
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "JZG3EdgBt5WkZN0v",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "id",
+              "value": "={{ $json.id }}"
+            },
+            {
+              "name": "name",
+              "value": "={{ $json.name }}"
+            },
+            {
+              "name": "folder_id",
+              "value": "={{ $('Input voice folder essentials').item.json[\"id\"] }}"
+            },
+            {
+              "name": "folder_name",
+              "value": "={{ $('Input voice folder essentials').item.json[\"name\"] }}"
+            },
+            {
+              "name": "proc_folder_id",
+              "value": "={{ $('Get processed folder').item.json[\"id\"] }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "56515e7d-1301-4d23-a647-85c3d62ab1de",
+      "name": "Essential item data",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 2,
+      "position": [
+        2440,
+        740
+      ]
+    },
+    {
+      "parameters": {
+        "batchSize": 1,
+        "options": {
+          "reset": false
+        }
+      },
+      "id": "ff270a9b-25f8-480c-82c2-1ce82e202521",
+      "name": "Batch of several to transcribe",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 2,
+      "position": [
+        2780,
+        740
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "sort",
+        "type": "random"
+      },
+      "id": "4bf93f7b-0b22-4de1-af45-4c5466554d55",
+      "name": "Item Lists",
+      "type": "n8n-nodes-base.itemLists",
+      "typeVersion": 3,
+      "position": [
+        2600,
+        740
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "fileFolder",
+        "queryString": "={{ $('Input voice folder essentials').item.json[\"name\"] }}_processed",
+        "returnAll": true,
+        "filter": {
+          "folderId": {
+            "__rl": true,
+            "value": "={{ $('Voice processed folder id').item.json[\"voice_proc_folder_id\"] }}",
+            "mode": "id"
+          }
+        },
+        "options": {}
+      },
+      "id": "83d3fae4-e031-43bc-b980-a7fb12e5bcd5",
+      "name": "Get processed folder",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        720,
+        640
+      ],
+      "executeOnce": true,
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "JZG3EdgBt5WkZN0v",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "fileFolder",
+        "queryString": "=\"{{ $json.textMemoName }}\"",
+        "returnAll": true,
+        "filter": {
+          "folderId": {
+            "__rl": true,
+            "value": "={{ $('Text raw folder essentials').item.json[\"text_raw_folder_id\"] }}",
+            "mode": "id"
+          },
+          "whatToSearch": "files",
+          "includeTrashed": false
+        },
+        "options": {}
+      },
+      "id": "1a46c12d-7d93-4fd4-8580-4612668d837f",
+      "name": "Search if the text memo already exists",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        3280,
+        560
+      ],
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "JZG3EdgBt5WkZN0v",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "copy",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $('Essential item data').item.json[\"id\"] }}",
+          "mode": "id"
+        },
+        "name": "={{ $('Essential item data').item.json[\"name\"] }}",
+        "sameFolder": false,
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "={{ $('Processed folder id').item.json[\"proc_folder_id\"] }}",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "id": "1309521a-5c3f-4406-82d0-3cbedb82bdc3",
+      "name": "Copy input audio to processed folder",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        4780,
+        880
+      ],
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "JZG3EdgBt5WkZN0v",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "id": "a853a0f1-8bb7-4fc5-9c4a-eb4dede4e0b5",
+      "name": "End",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        -300,
+        1260
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "jsonToBinary",
+        "convertAllData": false,
+        "sourceKey": "text",
+        "options": {
+          "fileName": "={{ $('Set text memo file name').item.json[\"textMemoName\"] }}",
+          "useRawData": true
+        }
+      },
+      "id": "819c165f-398b-4d3f-b6f3-5277ff25972c",
+      "name": "MAKE JSON FILES",
+      "type": "n8n-nodes-base.moveBinaryData",
+      "position": [
+        4540,
+        580
+      ],
+      "notesInFlow": true,
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "resource": "fileFolder",
+        "queryString": "voice",
+        "returnAll": true,
+        "filter": {
+          "driveId": {
+            "mode": "list",
+            "value": "My Drive"
+          },
+          "folderId": {
+            "__rl": true,
+            "value": "",
+            "mode": "list",
+            "cachedResultName": "memo",
+            "cachedResultUrl": ""
+          }
+        },
+        "options": {}
+      },
+      "id": "81f3fd00-bfaf-4b18-b093-a334ff90eb7a",
+      "name": "Root folder",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -2560,
+        40
+      ],
+      "retryOnFail": false,
+      "alwaysOutputData": true,
+      "executeOnce": false,
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "JZG3EdgBt5WkZN0v",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fields": {
+          "values": [
+            {
+              "name": "root_folder_id",
+              "stringValue": "={{ $('Root folder').params[\"filter\"][\"folderId\"][\"value\"] }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "e9af0a15-30f3-4b01-af8f-82d7e5b33fc7",
+      "name": "Root folder essentials",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.2,
+      "position": [
+        -2420,
+        40
+      ],
+      "executeOnce": true
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "5564aa7a-5694-403e-9fa9-9e951bd42f5b",
+              "leftValue": "={{ $json.id }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "a2745295-dc32-409b-8d2a-ff059cbab7ec",
+      "name": "If voice folder exist",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        -2240,
+        40
+      ]
+    },
+    {
+      "parameters": {
+        "fields": {
+          "values": [
+            {
+              "name": "voice_folder_root_id",
+              "stringValue": "={{ $json.id }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "8b581042-b966-4c73-b557-6c2215ea6968",
+      "name": "Voice  folder root essentials",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.2,
+      "position": [
+        -1860,
+        20
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "fileFolder",
+        "queryString": "general",
+        "returnAll": true,
+        "filter": {
+          "folderId": {
+            "__rl": true,
+            "value": "={{ $('Voice raw folder id').item.json[\"voice_raw_folder_id\"] }}",
+            "mode": "id"
+          }
+        },
+        "options": {}
+      },
+      "id": "34598560-f009-4417-a18c-28542da1e527",
+      "name": "Get general voice folder",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        700,
+        -40
+      ],
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "JZG3EdgBt5WkZN0v",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "feaa1460-0960-4b77-acc9-0926598bbc1b",
+              "leftValue": "={{ $json.id }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "4f5bf724-014c-4e26-8a72-681342d3b9e7",
+      "name": "If general voice exists",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        940,
+        -40
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "folder",
+        "name": "voice",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "={{ $('Root folder essentials').item.json[\"root_folder_id\"] }}",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "id": "c18d66c2-5185-4f3f-bb74-d39385c463b8",
+      "name": "Create root voice folder",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -2060,
+        -140
+      ],
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "JZG3EdgBt5WkZN0v",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "folder",
+        "name": "general",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "={{ $('Voice raw folder id').item.json[\"voice_raw_folder_id\"] }}",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "id": "548bb0b7-fb73-43f9-be14-60e644dbb16e",
+      "name": "Create general voice folder",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        1160,
+        -200
+      ],
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "JZG3EdgBt5WkZN0v",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "batchSize": 1,
+        "options": {
+          "reset": false
+        }
+      },
+      "id": "c5ac91f2-fba7-4d1d-b5df-75747a4297ef",
+      "name": "Iterate over all input folders",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 2,
+      "position": [
+        -440,
+        640
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "e4b4db23-d630-4636-9a71-5a550502414b",
+      "name": "When clicking \"Test workflow\"",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -2760,
+        220
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "feaa1460-0960-4b77-acc9-0926598bbc1b",
+              "leftValue": "={{ $json.id }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "5c678051-ffa5-4658-b43b-b33c9fd56bda",
+      "name": "If processed folder exists",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        880,
+        640
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "918c4b78-5043-48a1-b220-485616e067ac",
+      "name": "Buffer",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1840,
+        720
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "mergeByFields": {
+          "values": [
+            {
+              "field1": "name",
+              "field2": "name"
+            }
+          ]
+        },
+        "joinMode": "keepNonMatches",
+        "outputDataFrom": "input2",
+        "options": {}
+      },
+      "id": "29a861fc-3d98-4c8f-99c6-1007aa11398b",
+      "name": "Select new",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 2.1,
+      "position": [
+        2140,
+        460
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "fileFolder",
+        "queryString": "text",
+        "returnAll": true,
+        "filter": {
+          "folderId": {
+            "__rl": true,
+            "value": "={{ $('Root folder essentials').item.json[\"root_folder_id\"] }}",
+            "mode": "id"
+          }
+        },
+        "options": {}
+      },
+      "id": "1c5b9143-6fc9-4f86-ad09-7717193f18da",
+      "name": "Get text root folder",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        1380,
+        -40
+      ],
+      "alwaysOutputData": true,
+      "executeOnce": true,
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "JZG3EdgBt5WkZN0v",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "feaa1460-0960-4b77-acc9-0926598bbc1b",
+              "leftValue": "={{ $json.id }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "7fb26e54-4ac1-4f26-9e16-d8ff0b44b784",
+      "name": "If text root folder exists",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        1560,
+        -40
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "fileFolder",
+        "queryString": "raw",
+        "returnAll": true,
+        "filter": {
+          "folderId": {
+            "__rl": true,
+            "value": "={{ $json.id }}",
+            "mode": "id"
+          }
+        },
+        "options": {}
+      },
+      "id": "e701f664-19d1-4ef5-884c-7c68ecb07111",
+      "name": "Get text raw folder",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        2080,
+        -60
+      ],
+      "alwaysOutputData": true,
+      "executeOnce": true,
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "JZG3EdgBt5WkZN0v",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "folder",
+        "name": "text",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "={{ $('Root folder essentials').item.json[\"root_folder_id\"] }}",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "id": "26ca2323-ed7e-48db-b8cd-885342304974",
+      "name": "Create text root folder",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        1760,
+        -220
+      ],
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "JZG3EdgBt5WkZN0v",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "feaa1460-0960-4b77-acc9-0926598bbc1b",
+              "leftValue": "={{ $json.id }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "cc86f901-f48b-4308-95df-402605bbc33b",
+      "name": "If text raw folder exists",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        2260,
+        -60
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "folder",
+        "name": "raw",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "={{ $('Text root folder id').item.json[\"text_root_folder_id\"] }}",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "id": "d3ba9010-2c71-46e3-addb-178db7ee2bdd",
+      "name": "Create text raw folder",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        2440,
+        -260
+      ],
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "JZG3EdgBt5WkZN0v",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fields": {
+          "values": [
+            {
+              "name": "text_raw_folder_id",
+              "stringValue": "={{ $json.id }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "79947124-7620-4fb9-a0f3-95b9132c3833",
+      "name": "Text raw folder essentials",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.2,
+      "position": [
+        2620,
+        -80
+      ]
+    },
+    {
+      "parameters": {
+        "fields": {
+          "values": [
+            {
+              "name": "text_root_folder_id",
+              "stringValue": "={{ $json.id }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "e2dc04f8-731f-448e-86c4-8cca897e59e8",
+      "name": "Text root folder id",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.2,
+      "position": [
+        1920,
+        -60
+      ],
+      "executeOnce": true
+    },
+    {
+      "parameters": {
+        "resource": "fileFolder",
+        "queryString": "raw",
+        "returnAll": true,
+        "filter": {
+          "folderId": {
+            "__rl": true,
+            "value": "={{ $json[\"voice_folder_root_id\"] }}",
+            "mode": "id"
+          }
+        },
+        "options": {}
+      },
+      "id": "3c04009f-c69b-4c51-8341-2fbd26b55513",
+      "name": "Get raw voice folder",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -1700,
+        20
+      ],
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "JZG3EdgBt5WkZN0v",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "feaa1460-0960-4b77-acc9-0926598bbc1b",
+              "leftValue": "={{ $json.id }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "4e44a8d7-ce4d-4b0d-8973-9bf349759b51",
+      "name": "If raw voice folder exists",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        -1540,
+        20
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "folder",
+        "name": "raw",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "={{ $('Voice  folder root essentials').item.json[\"voice_folder_root_id\"] }}",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "id": "846f3b86-3747-4298-bb0f-2eba3139607f",
+      "name": "Create raw voice folder",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -1360,
+        -140
+      ],
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "JZG3EdgBt5WkZN0v",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fields": {
+          "values": [
+            {
+              "name": "voice_raw_folder_id",
+              "stringValue": "={{ $json.id }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "acba05b0-4778-422b-a492-e3efb49eae6b",
+      "name": "Voice raw folder id",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.2,
+      "position": [
+        -1160,
+        20
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "feaa1460-0960-4b77-acc9-0926598bbc1b",
+              "leftValue": "={{ $json.id }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "92658126-d28e-4b56-ac61-e46b526aec0f",
+      "name": "If processed voice folder exists",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        100,
+        -40
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "folder",
+        "name": "processed",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "={{ $('Voice  folder root essentials').item.json[\"voice_folder_root_id\"] }}",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "id": "3296f5f3-a7a1-4a2b-8d5b-b276173e5766",
+      "name": "Create processed voice folder",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        280,
+        -180
+      ],
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "JZG3EdgBt5WkZN0v",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fields": {
+          "values": [
+            {
+              "name": "voice_proc_folder_id",
+              "stringValue": "={{ $json.id }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "e8ee9a51-0351-4abf-b889-1794c6487c10",
+      "name": "Voice processed folder id",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.2,
+      "position": [
+        480,
+        -40
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "fileFolder",
+        "searchMethod": "=name",
+        "returnAll": true,
+        "filter": {
+          "folderId": {
+            "__rl": true,
+            "value": "={{ $('Voice raw folder id').item.json[\"voice_raw_folder_id\"] }}",
+            "mode": "id"
+          }
+        },
+        "options": {}
+      },
+      "id": "7606a0d0-8bab-4568-9cb5-73ec61986a1d",
+      "name": "Get all raw voice folders",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        2820,
+        120
+      ],
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "JZG3EdgBt5WkZN0v",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "f483c136-274c-423d-8a90-0d3381b32ddb",
+      "name": "Input voice folder essentials",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.2,
+      "position": [
+        -220,
+        620
+      ]
+    },
+    {
+      "parameters": {
+        "name": "={{ $('Set text memo file name').item.json[\"textMemoName\"] }}",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "={{ $('Text raw folder essentials').item.json[\"text_raw_folder_id\"] }}",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "id": "5121dd9b-866d-424a-a781-579663e8c50b",
+      "name": "Save text memo to drive",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        4820,
+        540
+      ],
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "JZG3EdgBt5WkZN0v",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours"
+            }
+          ]
+        }
+      },
+      "id": "ab29c41b-2c8a-4875-8485-4bd5d674c9e3",
+      "name": "Schedule Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -2740,
+        -160
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "d7cca255-fb23-4c94-b01b-f047ee134dd9",
+              "leftValue": "={{ $json }}",
+              "rightValue": "",
+              "operator": {
+                "type": "object",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "711a5fd8-f91e-4359-ab57-b39964dde3fb",
+      "name": "If new items found",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        2280,
+        560
+      ]
+    },
     {
       "parameters": {
         "method": "POST",
@@ -24,42 +1247,49 @@
         },
         "options": {}
       },
-      "id": "b6e80bb0-173e-4d4b-b996-5cbfc053517b",
+      "id": "dda889d7-d572-45b3-b95c-ae5d2f4296b1",
       "name": "Whisper-transcribe",
       "type": "n8n-nodes-base.httpRequest",
       "position": [
-        3740,
+        4240,
         880
       ],
       "typeVersion": 3,
       "credentials": {
         "openAiApi": {
-          "id": "DHE7oPerLxdXAcKP",
+          "id": "EdDTHq6Hm6XVn47p",
           "name": "OpenAi account"
         }
-      }
+      },
+      "onError": "continueErrorOutput"
     },
     {
       "parameters": {
-        "operation": "download",
-        "fileId": {
+        "resource": "folder",
+        "name": "={{ $('Input voice folder essentials').item.json[\"name\"] }}_processed",
+        "driveId": {
           "__rl": true,
-          "value": "={{ $('Essential item data').item.json[\"id\"] }}",
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "={{ $('Voice processed folder id').item.json[\"voice_proc_folder_id\"] }}",
           "mode": "id"
         },
         "options": {}
       },
-      "id": "dc65aa5b-1a9f-49af-87bf-fa40fda820c6",
-      "name": "Download audio",
+      "id": "0d6bed69-81e6-46e8-a56c-e46501906da2",
+      "name": "Create processed folder",
       "type": "n8n-nodes-base.googleDrive",
       "typeVersion": 3,
       "position": [
-        3580,
-        880
+        1040,
+        760
       ],
       "credentials": {
         "googleDriveOAuth2Api": {
-          "id": "KtAdoWzUMrqyQGvs",
+          "id": "JZG3EdgBt5WkZN0v",
           "name": "Google Drive account"
         }
       }
@@ -69,454 +1299,114 @@
         "values": {
           "string": [
             {
-              "name": "textMemoName",
-              "value": "={{ $('Essential item data').item.json[\"folder_name\"] }}_{{ $('Essential item data').item.json[\"name\"] }}.txt"
+              "name": "proc_folder_id",
+              "value": "={{ $json.id }}"
             }
           ]
         },
         "options": {}
       },
-      "id": "a37528c0-755c-41c5-b053-c268274ba82b",
-      "name": "Set text memo file name",
+      "id": "cc469a96-12fc-4323-82d3-2f696193b326",
+      "name": "Processed folder id",
       "type": "n8n-nodes-base.set",
       "typeVersion": 2,
       "position": [
-        2420,
-        560
-      ]
-    },
-    {
-      "parameters": {
-        "conditions": {
-          "string": [
-            {
-              "value1": "={{ $json.name }}",
-              "value2": "={{ $('Set text memo file name').item.json[\"textMemoName\"] }}"
-            }
-          ]
-        }
-      },
-      "id": "09d05f32-2850-4a25-a487-e7eef0333b4d",
-      "name": "filter out non-exact matches",
-      "type": "n8n-nodes-base.filter",
-      "typeVersion": 1,
-      "position": [
-        2840,
-        560
-      ],
-      "alwaysOutputData": true
-    },
-    {
-      "parameters": {
-        "conditions": {
-          "string": [
-            {
-              "value1": "={{ $json.name }}",
-              "operation": "isNotEmpty"
-            }
-          ]
-        }
-      },
-      "id": "365d175d-4530-4df7-a796-9346212c75d3",
-      "name": "IF text memo found",
-      "type": "n8n-nodes-base.if",
-      "typeVersion": 1,
-      "position": [
-        3380,
-        860
-      ],
-      "executeOnce": true,
-      "alwaysOutputData": false
-    },
-    {
-      "parameters": {
-        "pollTimes": {
-          "item": [
-            {
-              "mode": "everyMinute"
-            }
-          ]
-        },
-        "triggerOn": "specificFolder",
-        "folderToWatch": {
-          "__rl": true,
-          "value": "1",
-          "mode": "list",
-          "cachedResultName": "ipad",
-          "cachedResultUrl": "https://drive.google.com/drive/folders/"
-        },
-        "event": "fileCreated",
-        "options": {
-          "fileType": "all"
-        }
-      },
-      "id": "1a1faa4e-42c0-4a13-a986-b74ab19bc91d",
-      "name": "New in ipad folder",
-      "type": "n8n-nodes-base.googleDriveTrigger",
-      "typeVersion": 1,
-      "position": [
-        460,
-        960
-      ],
-      "credentials": {
-        "googleDriveOAuth2Api": {
-          "id": "KtAdoWzUMrqyQGvs",
-          "name": "Google Drive account"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "pollTimes": {
-          "item": [
-            {
-              "mode": "everyMinute"
-            }
-          ]
-        },
-        "triggerOn": "specificFolder",
-        "folderToWatch": {
-          "__rl": true,
-          "value": "1",
-          "mode": "list",
-          "cachedResultName": "general",
-          "cachedResultUrl": "https://drive.google.com/drive/folders/"
-        },
-        "event": "fileCreated",
-        "options": {
-          "fileType": "all"
-        }
-      },
-      "id": "1bcb8e23-165a-4faf-ae07-7c3c0295ff0d",
-      "name": "New in general folder",
-      "type": "n8n-nodes-base.googleDriveTrigger",
-      "typeVersion": 1,
-      "position": [
-        460,
+        1220,
         640
-      ],
-      "credentials": {
-        "googleDriveOAuth2Api": {
-          "id": "KtAdoWzUMrqyQGvs",
-          "name": "Google Drive account"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "pollTimes": {
-          "item": [
-            {
-              "mode": "everyMinute"
-            }
-          ]
-        },
-        "triggerOn": "specificFolder",
-        "folderToWatch": {
-          "__rl": true,
-          "value": "1",
-          "mode": "list",
-          "cachedResultName": "iphone",
-          "cachedResultUrl": "https://drive.google.com/drive/folders/"
-        },
-        "event": "fileCreated",
-        "options": {
-          "fileType": "all"
-        }
-      },
-      "id": "12b863ea-9ab0-43be-9f48-1574bf9ca66b",
-      "name": "New in iphone folder",
-      "type": "n8n-nodes-base.googleDriveTrigger",
-      "typeVersion": 1,
-      "position": [
-        460,
-        800
-      ],
-      "credentials": {
-        "googleDriveOAuth2Api": {
-          "id": "KtAdoWzUMrqyQGvs",
-          "name": "Google Drive account"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "pollTimes": {
-          "item": [
-            {
-              "mode": "everyMinute"
-            }
-          ]
-        },
-        "triggerOn": "specificFolder",
-        "folderToWatch": {
-          "__rl": true,
-          "value": "1",
-          "mode": "list",
-          "cachedResultName": "watch",
-          "cachedResultUrl": "https://drive.google.com/drive/folders/"
-        },
-        "event": "fileCreated",
-        "options": {
-          "fileType": "all"
-        }
-      },
-      "id": "bef5c282-83d1-4a85-8eaa-30e1f87ebdc6",
-      "name": "New in watch folder",
-      "type": "n8n-nodes-base.googleDriveTrigger",
-      "typeVersion": 1,
-      "position": [
-        460,
-        460
-      ],
-      "credentials": {
-        "googleDriveOAuth2Api": {
-          "id": "KtAdoWzUMrqyQGvs",
-          "name": "Google Drive account"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "amount": 0.1,
-        "unit": "minutes"
-      },
-      "id": "afbba6fe-1fc1-4bea-9b21-7469e637607a",
-      "name": "Wait",
-      "type": "n8n-nodes-base.wait",
-      "typeVersion": 1,
-      "position": [
-        4340,
-        880
-      ],
-      "webhookId": "82987932-3514-4620-9b47-a2245dbad2de"
-    },
-    {
-      "parameters": {
-        "resource": "fileFolder",
-        "returnAll": true,
-        "filter": {
-          "folderId": {
-            "__rl": true,
-            "value": "={{ $('Item data reference node').item.json[\"parents\"][0] }}",
-            "mode": "id"
-          }
-        },
-        "options": {}
-      },
-      "id": "6517ccd4-9de6-4889-b48a-36b345fbfa61",
-      "name": "Get all items in input folder",
-      "type": "n8n-nodes-base.googleDrive",
-      "typeVersion": 3,
-      "position": [
-        1360,
-        740
-      ],
-      "credentials": {
-        "googleDriveOAuth2Api": {
-          "id": "KtAdoWzUMrqyQGvs",
-          "name": "Google Drive account"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "values": {
-          "string": [
-            {
-              "name": "proc_folder_name",
-              "value": "={{ $json.in_folder_name }}_processed"
-            }
-          ]
-        },
-        "options": {}
-      },
-      "id": "09453a88-0d57-408b-9331-9fb1015eeb99",
-      "name": "Item data reference node",
-      "type": "n8n-nodes-base.set",
-      "typeVersion": 2,
-      "position": [
-        860,
-        740
       ],
       "alwaysOutputData": false,
       "executeOnce": true
     },
     {
       "parameters": {
-        "values": {
-          "string": [
-            {
-              "name": "id",
-              "value": "={{ $json.id }}"
-            },
-            {
-              "name": "name",
-              "value": "={{ $json.name }}"
-            },
-            {
-              "name": "folder_id",
-              "value": "={{ $('Item data reference node').item.json[\"parents\"][0] }}"
-            },
-            {
-              "name": "folder_name",
-              "value": "={{ $('Item data reference node').item.json[\"in_folder_name\"] }}"
-            },
-            {
-              "name": "proc_folder_id",
-              "value": "={{ $('Get processed folder').item.json[\"id\"] }}"
-            }
-          ]
-        },
-        "options": {}
-      },
-      "id": "6615472b-18b4-4efc-a618-3bbf60066c61",
-      "name": "Essential item data",
-      "type": "n8n-nodes-base.set",
-      "typeVersion": 2,
-      "position": [
-        1640,
-        660
-      ]
-    },
-    {
-      "parameters": {
-        "batchSize": 1,
-        "options": {
-          "reset": false
-        }
-      },
-      "id": "b0eafd26-ceb5-4c8f-91a5-9e64488221ba",
-      "name": "Batch of several to transcribe",
-      "type": "n8n-nodes-base.splitInBatches",
-      "typeVersion": 2,
-      "position": [
-        2120,
-        740
-      ]
-    },
-    {
-      "parameters": {
-        "operation": "sort",
-        "type": "random"
-      },
-      "id": "20f051cf-6cf2-42ff-b41d-25e14c601f41",
-      "name": "Item Lists",
-      "type": "n8n-nodes-base.itemLists",
-      "typeVersion": 3,
-      "position": [
-        1920,
-        760
-      ]
-    },
-    {
-      "parameters": {
-        "values": {
-          "string": [
-            {
-              "name": "in_folder_name",
-              "value": "watch"
-            }
-          ]
-        },
-        "options": {}
-      },
-      "id": "0a02fa63-f37c-499f-a942-fc0dfdce3908",
-      "name": "Set input watch folder name",
-      "type": "n8n-nodes-base.set",
-      "typeVersion": 2,
-      "position": [
-        640,
-        460
-      ]
-    },
-    {
-      "parameters": {
-        "values": {
-          "string": [
-            {
-              "name": "in_folder_name",
-              "value": "general"
-            }
-          ]
-        },
-        "options": {}
-      },
-      "id": "41350833-498d-43bd-ace6-541088dbfcfd",
-      "name": "Set input general folder name",
-      "type": "n8n-nodes-base.set",
-      "typeVersion": 2,
-      "position": [
-        640,
-        640
-      ]
-    },
-    {
-      "parameters": {
-        "values": {
-          "string": [
-            {
-              "name": "in_folder_name",
-              "value": "iphone"
-            }
-          ]
-        },
-        "options": {}
-      },
-      "id": "628a164a-028e-40d2-a489-51ff4d30e790",
-      "name": "Set input iphone folder name",
-      "type": "n8n-nodes-base.set",
-      "typeVersion": 2,
-      "position": [
-        640,
-        800
-      ]
-    },
-    {
-      "parameters": {
-        "values": {
-          "string": [
-            {
-              "name": "in_folder_name",
-              "value": "ipad"
-            }
-          ]
-        },
-        "options": {}
-      },
-      "id": "ae43f6c4-93bf-4e9f-b269-5daeb34290b4",
-      "name": "Set input ipad folder name",
-      "type": "n8n-nodes-base.set",
-      "typeVersion": 2,
-      "position": [
-        640,
-        960
-      ]
-    },
-    {
-      "parameters": {
         "resource": "fileFolder",
+        "queryString": "error",
         "returnAll": true,
         "filter": {
           "folderId": {
             "__rl": true,
-            "value": "={{ $json.id }}",
+            "value": "={{ $('Voice  folder root essentials').item.json[\"id\"] }}",
             "mode": "id"
           }
         },
         "options": {}
       },
-      "id": "e4ac0c38-684e-4f8c-9fe0-927bed7d03a4",
-      "name": "Get all items in processed folder",
+      "id": "e84cc467-b7f0-4aca-b56e-67c38134a43e",
+      "name": "Get error voice folder",
       "type": "n8n-nodes-base.googleDrive",
       "typeVersion": 3,
       "position": [
-        1220,
-        480
+        -920,
+        20
+      ],
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "JZG3EdgBt5WkZN0v",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "feaa1460-0960-4b77-acc9-0926598bbc1b",
+              "leftValue": "={{ $json.id }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "94b88d72-4f87-40fb-8250-7cd0b239b1b7",
+      "name": "If error voice folder exists",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        -740,
+        20
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "folder",
+        "name": "error",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "={{ $('Voice  folder root essentials').item.json[\"voice_folder_root_id\"] }}",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "id": "59fe05f0-bd28-4330-bc5d-d69b343bd1e4",
+      "name": "Create error voice folder",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -500,
+        -160
       ],
       "credentials": {
         "googleDriveOAuth2Api": {
-          "id": "KtAdoWzUMrqyQGvs",
+          "id": "JZG3EdgBt5WkZN0v",
           "name": "Google Drive account"
         }
       }
@@ -524,79 +1414,237 @@
     {
       "parameters": {
         "resource": "fileFolder",
-        "queryString": "={{ $json[\"proc_folder_name\"] }}",
-        "filter": {},
+        "queryString": "processed",
+        "returnAll": true,
+        "filter": {
+          "folderId": {
+            "__rl": true,
+            "value": "={{ $('Voice  folder root essentials').item.json[\"voice_folder_root_id\"] }}",
+            "mode": "id"
+          }
+        },
         "options": {}
       },
-      "id": "2496c0cc-708b-4a28-a8ec-ea3355137c91",
-      "name": "Get processed folder",
+      "id": "9412fb3b-c96c-458b-8dce-59025fb6be72",
+      "name": "Get processed voice folder",
       "type": "n8n-nodes-base.googleDrive",
       "typeVersion": 3,
       "position": [
-        1000,
-        560
+        -80,
+        -40
       ],
+      "alwaysOutputData": true,
       "credentials": {
         "googleDriveOAuth2Api": {
-          "id": "KtAdoWzUMrqyQGvs",
+          "id": "JZG3EdgBt5WkZN0v",
           "name": "Google Drive account"
         }
       }
     },
     {
       "parameters": {
-        "mode": "combine",
-        "mergeByFields": {
+        "resource": "fileFolder",
+        "returnAll": true,
+        "filter": {
+          "folderId": {
+            "__rl": true,
+            "value": "={{ $('Processed folder id').item.json[\"proc_folder_id\"] }}",
+            "mode": "id"
+          }
+        },
+        "options": {}
+      },
+      "id": "78fc6df4-470e-4c9c-91ba-227e3e0ce495",
+      "name": "Get all items in processed folder",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        1420,
+        640
+      ],
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "JZG3EdgBt5WkZN0v",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "feaa1460-0960-4b77-acc9-0926598bbc1b",
+              "leftValue": "={{ $json.id }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "94b60412-5dbc-4d1c-a7e4-028523913b4d",
+      "name": "If error folder exists",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        140,
+        620
+      ]
+    },
+    {
+      "parameters": {
+        "fields": {
           "values": [
             {
-              "field1": "name",
-              "field2": "name"
+              "name": "voice_error_folder_id",
+              "stringValue": "={{ $json.id }}"
             }
           ]
         },
-        "joinMode": "keepNonMatches",
-        "outputDataFrom": "input2",
         "options": {}
       },
-      "id": "515d9460-b6bf-4036-87cf-01de344cfc79",
-      "name": "Selet new",
+      "id": "f6777b0d-b5ef-47bf-87a1-55bd60556b3b",
+      "name": "Voice error folder id",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.2,
+      "position": [
+        -340,
+        -20
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "fileFolder",
+        "queryString": "={{ $json.name }}_error",
+        "returnAll": true,
+        "filter": {
+          "folderId": {
+            "__rl": true,
+            "value": "={{ $('Voice error folder id').item.json[\"voice_error_folder_id\"] }}",
+            "mode": "id"
+          }
+        },
+        "options": {}
+      },
+      "id": "2e125e3e-fadc-49c5-bc41-09c859d0a4c3",
+      "name": "Get error folder",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -40,
+        620
+      ],
+      "executeOnce": true,
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "JZG3EdgBt5WkZN0v",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "folder",
+        "name": "={{ $('Input voice folder essentials').item.json[\"name\"] }}_error",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "={{ $('Voice error folder id').item.json[\"voice_error_folder_id\"] }}",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "id": "4d92a56b-c26e-4829-bb4c-eddd0c16f303",
+      "name": "Create error folder",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        340,
+        780
+      ],
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "JZG3EdgBt5WkZN0v",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "error_folder_id",
+              "value": "={{ $json.id }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "461fb595-99ac-4f2d-bcb7-e95a90693388",
+      "name": "Error folder id",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 2,
+      "position": [
+        520,
+        640
+      ],
+      "alwaysOutputData": false,
+      "executeOnce": true
+    },
+    {
+      "parameters": {},
+      "id": "4aa41c51-6f39-44c5-8de4-93c83951493b",
+      "name": "Merge",
       "type": "n8n-nodes-base.merge",
       "typeVersion": 2.1,
       "position": [
-        1500,
+        1680,
         460
       ]
     },
     {
       "parameters": {
         "resource": "fileFolder",
-        "queryString": "=\"{{ $json.textMemoName }}\"",
         "returnAll": true,
         "filter": {
           "folderId": {
             "__rl": true,
-            "value": "1",
-            "mode": "list",
-            "cachedResultName": "text",
-            "cachedResultUrl": "https://drive.google.com/drive/folders/"
-          },
-          "whatToSearch": "files",
-          "includeTrashed": false
+            "value": "={{ $('Error folder id').item.json[\"error_folder_id\"] }}",
+            "mode": "id"
+          }
         },
         "options": {}
       },
-      "id": "2574013a-820a-450d-9b2e-b19120da7502",
-      "name": "Search if the text memo already exists",
+      "id": "d7c81a1c-7291-4fb7-a88a-f268d3e9ba45",
+      "name": "Get all items in error folder",
       "type": "n8n-nodes-base.googleDrive",
       "typeVersion": 3,
       "position": [
-        2620,
-        560
+        1420,
+        400
       ],
-      "alwaysOutputData": true,
+      "alwaysOutputData": false,
       "credentials": {
         "googleDriveOAuth2Api": {
-          "id": "KtAdoWzUMrqyQGvs",
+          "id": "JZG3EdgBt5WkZN0v",
           "name": "Google Drive account"
         }
       }
@@ -618,117 +1666,44 @@
         },
         "folderId": {
           "__rl": true,
-          "value": "={{ $('Essential item data').item.json[\"proc_folder_id\"] }}",
+          "value": "={{ $('Error folder id').item.json[\"error_folder_id\"] }}",
           "mode": "id"
         },
         "options": {}
       },
-      "id": "7f70731e-0945-4dff-a62c-2b37f5533df8",
-      "name": "Copy input audio to processed folder",
+      "id": "50228eab-645f-4371-9f50-e6c1ec29cd8d",
+      "name": "Copy input audio to error folder",
       "type": "n8n-nodes-base.googleDrive",
       "typeVersion": 3,
       "position": [
-        4120,
-        880
+        4500,
+        980
       ],
       "credentials": {
         "googleDriveOAuth2Api": {
-          "id": "KtAdoWzUMrqyQGvs",
+          "id": "JZG3EdgBt5WkZN0v",
           "name": "Google Drive account"
         }
       }
     },
     {
       "parameters": {
-        "options": {}
+        "content": "# TODO\nRemove double check for  processed status of the voice memo. For now, if text memo for audio file was found, then consider it processed and copy to processed folder as well\n",
+        "height": 273.8075573041621,
+        "width": 231.75307555766943
       },
-      "id": "d1ca6789-2f7d-462b-8a6e-c36b0b37122c",
-      "name": "Buffer",
-      "type": "n8n-nodes-base.set",
-      "typeVersion": 2,
-      "position": [
-        1200,
-        760
-      ],
-      "executeOnce": true
-    },
-    {
-      "parameters": {},
-      "id": "b2f09264-181a-4877-902d-23da9640ebac",
-      "name": "End",
-      "type": "n8n-nodes-base.noOp",
+      "id": "60660aca-4751-4aa4-b958-9da9bbaf6df3",
+      "name": "Sticky Note",
+      "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        2460,
-        1200
-      ]
-    },
-    {
-      "parameters": {
-        "mode": "jsonToBinary",
-        "convertAllData": false,
-        "sourceKey": "text",
-        "options": {
-          "fileName": "={{ $('Set text memo file name').item.json[\"textMemoName\"] }}",
-          "useRawData": true
-        }
-      },
-      "id": "3b7a4884-9c5a-430c-aab8-67edf1c85c84",
-      "name": "MAKE JSON FILES",
-      "type": "n8n-nodes-base.moveBinaryData",
-      "position": [
-        3880,
+        4000,
         580
-      ],
-      "notesInFlow": true,
-      "typeVersion": 1
-    },
-    {
-      "parameters": {
-        "name": "={{ $('Set text memo file name').item.json[\"textMemoName\"] }}",
-        "driveId": {
-          "__rl": true,
-          "mode": "list",
-          "value": "My Drive"
-        },
-        "folderId": {
-          "__rl": true,
-          "value": "1",
-          "mode": "list",
-          "cachedResultName": "text",
-          "cachedResultUrl": "https://drive.google.com/drive/folders/"
-        },
-        "options": {}
-      },
-      "id": "4354359a-77e0-4dab-8e73-1bd4bb2eb634",
-      "name": "Google Drive",
-      "type": "n8n-nodes-base.googleDrive",
-      "typeVersion": 3,
-      "position": [
-        4160,
-        540
-      ],
-      "credentials": {
-        "googleDriveOAuth2Api": {
-          "id": "KtAdoWzUMrqyQGvs",
-          "name": "Google Drive account"
-        }
-      }
+      ]
     }
   ],
   "pinData": {},
   "connections": {
-    "Whisper-transcribe": {
-      "main": [
-        [
-          {
-            "node": "MAKE JSON FILES",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "Download audio": {
       "main": [
         [
@@ -766,7 +1741,7 @@
       "main": [
         [
           {
-            "node": "Batch of several to transcribe",
+            "node": "Copy input audio to processed folder",
             "type": "main",
             "index": 0
           }
@@ -784,31 +1759,9 @@
       "main": [
         [
           {
-            "node": "Selet new",
+            "node": "Select new",
             "type": "main",
             "index": 1
-          }
-        ]
-      ]
-    },
-    "Item data reference node": {
-      "main": [
-        [
-          {
-            "node": "Get processed folder",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "New in watch folder": {
-      "main": [
-        [
-          {
-            "node": "Set input watch folder name",
-            "type": "main",
-            "index": 0
           }
         ]
       ]
@@ -835,7 +1788,7 @@
         ],
         [
           {
-            "node": "End",
+            "node": "Iterate over all input folders",
             "type": "main",
             "index": 0
           }
@@ -853,82 +1806,11 @@
         ]
       ]
     },
-    "New in general folder": {
-      "main": [
-        [
-          {
-            "node": "Set input general folder name",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "New in iphone folder": {
-      "main": [
-        [
-          {
-            "node": "Set input iphone folder name",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "New in ipad folder": {
-      "main": [
-        [
-          {
-            "node": "Set input ipad folder name",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Set input watch folder name": {
-      "main": [
-        [
-          {
-            "node": "Item data reference node",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "Get processed folder": {
       "main": [
         [
           {
-            "node": "Get all items in processed folder",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Get all items in processed folder": {
-      "main": [
-        [
-          {
-            "node": "Selet new",
-            "type": "main",
-            "index": 0
-          },
-          {
-            "node": "Buffer",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Selet new": {
-      "main": [
-        [
-          {
-            "node": "Essential item data",
+            "node": "If processed folder exists",
             "type": "main",
             "index": 0
           }
@@ -940,17 +1822,6 @@
         [
           {
             "node": "filter out non-exact matches",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Buffer": {
-      "main": [
-        [
-          {
-            "node": "Get all items in input folder",
             "type": "main",
             "index": 0
           }
@@ -983,14 +1854,400 @@
       "main": [
         [
           {
-            "node": "Google Drive",
+            "node": "Save text memo to drive",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Google Drive": {
+    "Root folder": {
+      "main": [
+        [
+          {
+            "node": "Root folder essentials",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Root folder essentials": {
+      "main": [
+        [
+          {
+            "node": "If voice folder exist",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If voice folder exist": {
+      "main": [
+        [
+          {
+            "node": "Voice  folder root essentials",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Create root voice folder",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Voice  folder root essentials": {
+      "main": [
+        [
+          {
+            "node": "Get raw voice folder",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get general voice folder": {
+      "main": [
+        [
+          {
+            "node": "If general voice exists",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If general voice exists": {
+      "main": [
+        [
+          {
+            "node": "Get text root folder",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Create general voice folder",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create root voice folder": {
+      "main": [
+        [
+          {
+            "node": "Voice  folder root essentials",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create general voice folder": {
+      "main": [
+        [
+          {
+            "node": "Get text root folder",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Iterate over all input folders": {
+      "main": [
+        [
+          {
+            "node": "Input voice folder essentials",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "End",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When clicking \"Test workflow\"": {
+      "main": [
+        [
+          {
+            "node": "Root folder",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If processed folder exists": {
+      "main": [
+        [
+          {
+            "node": "Processed folder id",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Create processed folder",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Buffer": {
+      "main": [
+        [
+          {
+            "node": "Get all items in input folder",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Select new": {
+      "main": [
+        [
+          {
+            "node": "If new items found",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get text root folder": {
+      "main": [
+        [
+          {
+            "node": "If text root folder exists",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If text root folder exists": {
+      "main": [
+        [
+          {
+            "node": "Text root folder id",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Create text root folder",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create text root folder": {
+      "main": [
+        [
+          {
+            "node": "Text root folder id",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get text raw folder": {
+      "main": [
+        [
+          {
+            "node": "If text raw folder exists",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If text raw folder exists": {
+      "main": [
+        [
+          {
+            "node": "Text raw folder essentials",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Create text raw folder",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create text raw folder": {
+      "main": [
+        [
+          {
+            "node": "Text raw folder essentials",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Text raw folder essentials": {
+      "main": [
+        [
+          {
+            "node": "Get all raw voice folders",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Text root folder id": {
+      "main": [
+        [
+          {
+            "node": "Get text raw folder",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get raw voice folder": {
+      "main": [
+        [
+          {
+            "node": "If raw voice folder exists",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If raw voice folder exists": {
+      "main": [
+        [
+          {
+            "node": "Voice raw folder id",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Create raw voice folder",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create raw voice folder": {
+      "main": [
+        [
+          {
+            "node": "Voice raw folder id",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Voice raw folder id": {
+      "main": [
+        [
+          {
+            "node": "Get error voice folder",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If processed voice folder exists": {
+      "main": [
+        [
+          {
+            "node": "Voice processed folder id",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Create processed voice folder",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Voice processed folder id": {
+      "main": [
+        [
+          {
+            "node": "Get general voice folder",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create processed voice folder": {
+      "main": [
+        [
+          {
+            "node": "Voice processed folder id",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get all raw voice folders": {
+      "main": [
+        [
+          {
+            "node": "Iterate over all input folders",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Input voice folder essentials": {
+      "main": [
+        [
+          {
+            "node": "Get error folder",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Save text memo to drive": {
       "main": [
         [
           {
@@ -1001,33 +2258,236 @@
         ]
       ]
     },
-    "Set input general folder name": {
+    "Schedule Trigger": {
       "main": [
         [
           {
-            "node": "Item data reference node",
+            "node": "Root folder",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Set input iphone folder name": {
+    "If new items found": {
       "main": [
         [
           {
-            "node": "Item data reference node",
+            "node": "Essential item data",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Iterate over all input folders",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Set input ipad folder name": {
+    "Whisper-transcribe": {
       "main": [
         [
           {
-            "node": "Item data reference node",
+            "node": "MAKE JSON FILES",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Copy input audio to error folder",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create processed folder": {
+      "main": [
+        [
+          {
+            "node": "Processed folder id",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Processed folder id": {
+      "main": [
+        [
+          {
+            "node": "Get all items in processed folder",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Get all items in error folder",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get error voice folder": {
+      "main": [
+        [
+          {
+            "node": "If error voice folder exists",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If error voice folder exists": {
+      "main": [
+        [
+          {
+            "node": "Voice error folder id",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Create error voice folder",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create error voice folder": {
+      "main": [
+        [
+          {
+            "node": "Voice error folder id",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get processed voice folder": {
+      "main": [
+        [
+          {
+            "node": "If processed voice folder exists",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get all items in processed folder": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Voice error folder id": {
+      "main": [
+        [
+          {
+            "node": "Get processed voice folder",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get error folder": {
+      "main": [
+        [
+          {
+            "node": "If error folder exists",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If error folder exists": {
+      "main": [
+        [
+          {
+            "node": "Error folder id",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Create error folder",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create error folder": {
+      "main": [
+        [
+          {
+            "node": "Error folder id",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Error folder id": {
+      "main": [
+        [
+          {
+            "node": "Get processed folder",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Buffer",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Select new",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get all items in error folder": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Copy input audio to error folder": {
+      "main": [
+        [
+          {
+            "node": "Wait",
             "type": "main",
             "index": 0
           }
@@ -1039,11 +2499,11 @@
   "settings": {
     "executionOrder": "v1"
   },
-  "versionId": "1f7746e2-f700-41e9-b0a5-e40ad9253e96",
+  "versionId": "9ab986f1-681a-4395-8e98-007d27fb22ac",
   "meta": {
     "templateCredsSetupCompleted": true,
-    "instanceId": "ae1c826fe26613ac2253a0f3b34dec0f1f6c26254cfdf33d7ebb8ec44a243139"
+    "instanceId": "beb9879bc8cb5f19791047ba677ad81dfc94de5ec373473f419d6c5d1657b0fd"
   },
-  "id": "fX7GG7yxJcNR9q1d",
+  "id": "KzXmcvnkO2yvWchu",
   "tags": []
 }
