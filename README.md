@@ -66,8 +66,8 @@ After you run the voice transcription flow for the first time, it will create th
 ```
 
 #### Voice
-The "voice" folder is where all my input voice memo files are stored. Subfolders in the "raw" subfolder are where you put all your original voice memo files.
-**Initially, there's only the "general" subfolder – start by placing your voice memo files here.**
+The "voice" folder is where all my input voice memo files are stored. Subfolders in the "raw" folder (*device* subfolders) are where you put all your original voice memo files.
+**Initially, there's only the "general" subfolder – start by placing your voice memo files here.** If you need another *device* subfolder - just add it to the "raw" folder.
 
 Subfolders in the "processed" folder are where the flow will copy voice memo files after successful transcription. This allows the flow to detect new memos. I used the "copy" operation instead of "move" here because the tool I use to automatically upload voice memos from my smartwatch checks the files list in the original directory. Also, it's safer to use non-destructive operations. :)
 
