@@ -47,63 +47,44 @@ Open any Google Drive node (i.e. "New in general folder") and follow instruction
 
 After you created Drive credentials, open each Google Drive node and choose it. Do the same for Whisper transcription node to create OpenAI API credentials.
 
-### 0.4 Create Google Drive folders hierarchy 
-Go to your Google Drive and create "memo" folder somewhere. I have the following folder structure. 
+### 0.4 Google Drive folders hierarchy ()
+After you run the voice transcription flow for the first time, it will create the 'voice' folder hierarchy within the selected root folder. It will also create a 'text/raw' folder, where all transcriptions will be stored.
 
 ```
-|── memo
+|── root
   |── voice
-      |── watch
-      |── general
-      |── ipad
-      |── iphone
-      |── ...
-      |── watch_processed
-      |── general_processed
-      |── ipad_processed
-      |── iphone_processed
-      |── ...
+      |── raw
+            |── general
+      |── processed
+            |── general_processed
+      |── error
+            |── general_error
   |── text
       |── raw
       |── processed
-        |── base
+            |── base
 ```
 
 #### Voice
-"voice" folder is where all my input voice memo files are stored. I devided to have separate folder for each of my device, to be sure that memos with the same names will not overwrite each other. But for start you can leave only "general" folder. Don't forget to remove triggers for other folders in voice memo transcribe flow.
-If you need to add new input folder for voice memos - create flow entrance with trigger, similar to others:
+The "voice" folder is where all my input voice memo files are stored. Subfolders in the "raw" subfolder are where you put all your original voice memo files.
+**Initially, there's only the "general" subfolder – start by placing your voice memo files here.**
 
-![изображение](https://github.com/MrJimm/MemolAIzer/assets/5428408/d2fc5ae3-3246-4d31-9aab-934a93d9e76d)
+Subfolders in the "processed" folder are where the flow will copy voice memo files after successful transcription. This allows the flow to detect new memos. I used the "copy" operation instead of "move" here because the tool I use to automatically upload voice memos from my smartwatch checks the files list in the original directory. Also, it's safer to use non-destructive operations. :)
 
-!!!
-
-**BEWARE! THIS FLOW MAKE CHANGES ON YOUR GOOGLE DRIVE, MODIFIES FILES IN SPECIFIC FOLDERS! THOUGH INTENT IS TO CHANGE ONLY FILES AND FOLDERS CREATED ONLY BY THIS TOOL AND FOR THIS TOOL, SOME OF THEM ARE SOUGHT GLOBALLY BY NAME. MAKE SURE THAT YOU HAVE UNIQUE _processed FOLDERS!**
-
-**BE CAREFUL TO USE THIS TOOL AND CHECK TWICE ALL GOOGLE DRIVE WRITE NODES YOURSELF IF YOU HAVE ANY IMPORTANT DATA IN YOUR GOOGLE DRIVE, SINCE THIS SOFTWARE IS UNDER DEVELOPMENT AND HAVEN'T BEEN FULLY TESTED! IT CAN BE GOOD IDEA TO USE A SEPARATE DRIVE ACCOUNT IF YOU HAVE ONE**
-
-!!!
-
-"*_processed" folders are technical, but vital for tool to work. When the flow successfully transcribe voice memo from the "*device*" folder, it will copy its file to the correspondent "_processed" folder. And when the flow execution is triggered, it will process all files from all "*device*" folders, that are not found in "_processed" folders. This is done to prevent skipping some files if some "new file" trigger events are lost from Google Drive. You can use this to mark memo file for reprocessing - just delete correspondant file from "_processed" folder.
+Subfolders in the "error" folder are where voice memos will be copied if the Whisper node returns an error during transcription (this usually happens if a voice memo file is too large or your quota has expired). This error won't stop the flow. If you want these memos to be reprocessed, just remove the files from the corresponding "error" folder.
 
 #### Text
 "text" folders are for text memos. All successful transcriptions are automatically placed in "raw" folder. You also can place there your custom .txt file with text memo for further processing.
-All text analysis results are stored in "processed" folder. This topic is WIP for now. 
+All text analysis results are stored in "processed" folder.
 
-### 0.5 Set up Google Drive folders in flow
-After you created folders, double click on every Google Drive trigger node and reselect your *device* folders that you have created. Click on a dropdown list to the right of "from list" and find your folder by name
-
-![изображение](https://github.com/MrJimm/MemolAIzer/assets/5428408/57e1f926-1cf9-415f-bf3a-897893d48605)
-
-Go to the "Search if the text memo already exists" node and reselect your "raw" text folder.
-
-Go to the Google Drive node after the "MAKE JSON FILES" and reselect your "raw" text folder. 
 
 ## Part 1: Transcribe voice memo to text
 
 ### 1.1 Activate N8N flow
-Finally activate your flow. You can go then to "Executions" or "All executions" tab to monitor automation activities.
+Finally, activate your flow. You can then go to the "Executions" or "All executions" tab to monitor automation activities.
+The transcription flow is triggered by the timer node. The initial period is set to one hour, which you can adjust in the "Schedule Trigger" node (the first one in the flow).
 
-Memoaizer works with voice memos stored in Google Drive. The flow is triggered when any new file is uploaded to any of the voice/[device] folders (general, watch, etc). To set up automatic upload from your phone/watch see section "How to upload to Drive" below. Also see troubleshooting section if you see no execution is fired while you have new files in *device* folders. You can see executions in the designated tab in N8N interface.
+Memoaizer works with voice memos stored in Google Drive, in *devices* subfolders within root/voice/raw. To set up automatic upload from your phone/watch see section "How to upload to Drive" below. Also see troubleshooting section if you see no execution is fired while you have new files in *device* folders. You can see executions in the designated tab in N8N interface.
 
 ## Part 2: Analyze text transcriptions with ChatGPT API 
 Text Memo analysis flow from a text_memo_analysis.json will analyze your text transcriptions with ChatGPT API. The base processing for each memo are: 
@@ -152,7 +133,6 @@ For Galaxy Watch 3 on Android in the Wearable app go to Apps -> Voice Recorder -
 Then all recordings will sync in the folder /storage/emulated/0/Recordings/Sounds/Gear (at least, on my setup. Check similar path if memos will not appear there). Now you can use this path on your Phone to your watch recordings in sync app (FolderSync Pro in my case) to automatically sync memos to Drive ("watch" folder in my case).
 
 ## Troubleshooting
-1. If you have unprocessed memo files in your upload folder, but N8N don't fire execution - try to stop flow, start it, and only then remove one of the new files from the folder on Drive and place it back. Seems, that sometimes triggers on new files works if these files were placed only after the N8N flow was started.
-2. If you want to test the flow, but have any of your *device* folders empty, then you may encounter that hitting "test workflow" on voice memo transcription flow leads to error. Try to disconnect temporarily starting "trigger" brunches of empty folders. Or you can fetch test data if you open the node (by double clicking on it).
-3. Though voice transcription flow shuffles new unprocessed files, sometimes flow can stuck on "bad" file. For this I occasionaly check execution status and if I notice such problematic file, I manually move it to specific "*_error" folders, that I created in my "voice" folder.
-4. If your text memo processing flow does nothing after you started it, try to delete and then add manually any text file in "processed" folder. This should pull the right trigger in the flow. 
+1. If you have unprocessed memo files in your upload folder, but N8N don't fire execution - stop it and try to run with a "Test workflow" button in the UI. This way you can see the instant flow execution in realtime. Also try to adjust the "Schedule Trigger" timer period value.
+2. Though voice transcription flow shuffles new unprocessed files, sometimes flow can stuck on "bad" file. For this I occasionaly check execution status and if I notice such problematic file, I manually move it to specific "*_error" folders, that I created in my "voice" folder.
+3. If your text memo processing flow does nothing after you started it, try to delete and then add manually any text file in "processed" folder. This should pull the right trigger in the flow. 
