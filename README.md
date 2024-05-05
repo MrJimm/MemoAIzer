@@ -1,7 +1,7 @@
 Tool to automatically convert your voice memos to text and analyze it with ChatGPT.
 It consists of N8N workflows and uses Google Drive to sync and store all processed data.
 
-![изображение](https://github.com/MrJimm/MemoAIzer/assets/5428408/0306af9d-2fbf-45aa-a78b-d5bdabeb0bb0)
+![изображение](https://github.com/MrJimm/MemoAIzer/assets/5428408/9ae679ae-8d76-48ab-85cb-b147f8204217)
 
 # TL;DR
 1. Install n8n ([docker](https://docs.n8n.io/hosting/installation/docker/)).
@@ -10,15 +10,16 @@ It consists of N8N workflows and uses Google Drive to sync and store all process
 4. Create a root folder on your Google Drive, where all data will be stored
 5. Link this root folder in "Root folder" node (dropdown near "from list" field)
 
-![изображение](https://github.com/MrJimm/MemoAIzer/assets/5428408/8ff970a9-40fd-46af-9b2c-ec6d52f5e5d0)
+      <img src="https://github.com/MrJimm/MemoAIzer/assets/5428408/8ff970a9-40fd-46af-9b2c-ec6d52f5e5d0" width="200">
+
 
 7. Run the voice_memo_transcribe flow - it will automatically create all the folders hierarchy inside the root folder on your Google Drive.
 8. Import, set up and run text analysis workflow (see section 2) 
 9. Place some voice data into [root]/voice/raw/general and wait for results
 
-NOTE: Since memo transcription flow is triggered by timer hourly, you can either run flow manually with "Test workflow" button in N8N UI to get immediate results, or adjust timer trigger node (the first one) and restart the flow.
+NOTE: Since the memo transcription flow is triggered by a timer hourly, you can either run the flow manually with the 'Test workflow' button in the N8N UI to get immediate results, or adjust the timer trigger node (the first one) and restart the flow.
 
-   ![изображение](https://github.com/MrJimm/MemoAIzer/assets/5428408/7433314f-af39-4c43-98f3-4d5add0ba8b2)
+  <img src="https://github.com/MrJimm/MemoAIzer/assets/5428408/7433314f-af39-4c43-98f3-4d5add0ba8b2" width="600">
 
 
 # Detailed instruction
