@@ -4,7 +4,7 @@ It consists of N8N workflows and uses Google Drive to sync and store all process
 ![image_2024-05-08_00-01-19](https://github.com/MrJimm/MemoAIzer/assets/5428408/e590fd4b-351e-457b-8904-83868acf421d)
 
 # TL;DR
-1. Install n8n ([docker](https://docs.n8n.io/hosting/installation/docker/)).
+1. Install n8n ([docker](https://docs.n8n.io/hosting/installation/docker/), see sections 0.1-0.2 for recommended parameters).
 2. Import voice_memo_transcribe.json workflow from json file.
 3. Set up credentials for Google Drive and OpenAI nodes (see details at "Docs" tab of a node).
 4. Create a root folder on your Google Drive, where all data will be stored
