@@ -1,7 +1,7 @@
 Tool to automatically convert your voice memos to text and analyze it with ChatGPT.
 It consists of N8N workflows and uses Google Drive to sync and store all processed data.
 
-![изображение](https://github.com/MrJimm/MemoAIzer/assets/5428408/9ae679ae-8d76-48ab-85cb-b147f8204217)
+![image_2024-05-08_00-01-19](https://github.com/MrJimm/MemoAIzer/assets/5428408/e590fd4b-351e-457b-8904-83868acf421d)
 
 # TL;DR
 1. Install n8n ([docker](https://docs.n8n.io/hosting/installation/docker/)).
@@ -14,10 +14,11 @@ It consists of N8N workflows and uses Google Drive to sync and store all process
 
 
 7. Run the voice_memo_transcribe flow - it will automatically create all the folders hierarchy inside the root folder on your Google Drive.
-8. Import, set up and run text analysis workflow (see section 2) 
-9. Place some voice data into [root]/voice/raw/general and wait for results
+8. Now you can place some voice data into [root]/voice/raw/general and wait for transcription results in [root]/ 
+9. To engage text processing, import text_memo_analysis.json flow, select your root folder in the "Root folder" node (see section 2 for details) 
+10. Activate text analysis flow and wait for results to appear in folders in [root]/text/processed/base
 
-NOTE: Since the memo transcription flow is triggered by a timer hourly, you can either run the flow manually with the 'Test workflow' button in the N8N UI to get immediate results, or adjust the timer trigger node (the first one) and restart the flow.
+NOTE: Since flows are triggered by a timer hourly, you can either run each flow manually with the 'Test workflow' button in the N8N UI to get immediate results, or adjust the timer trigger node "Schedule trigger" and restart the flow.
 
   <img src="https://github.com/MrJimm/MemoAIzer/assets/5428408/7433314f-af39-4c43-98f3-4d5add0ba8b2" width="600">
 
@@ -87,7 +88,7 @@ The transcription flow is triggered by the timer node. The initial period is set
 Memoaizer works with voice memos stored in Google Drive, in *devices* subfolders within root/voice/raw. To set up automatic upload from your phone/watch see section "How to upload to Drive" below. Also see troubleshooting section if you see no execution is fired while you have new files in *device* folders. You can see executions in the designated tab in N8N interface.
 
 ## Part 2: Analyze text transcriptions with ChatGPT API 
-Text Memo analysis flow from a text_memo_analysis.json will analyze your text transcriptions with ChatGPT API. The base processing for each memo are: 
+Import text memo analysis flow from a text_memo_analysis.json. This flow will analyze your text transcriptions with ChatGPT API. The results of base processing for each memo, that you can find in subfolders in [root]/text/processed/base are: 
 
 1. XML with two titles and keywords, 
 2. Original text, formatted and cleaned
@@ -103,22 +104,17 @@ Text Memo analysis flow from a text_memo_analysis.json will analyze your text tr
 
 (red exclamation mark signs near Google Drive and OpenAI blocks highlights where you should set up credentials)
 
-3. On your Google Drive in your text/processed/ folder create "base" folder (see folders hierarchy in step 0.4)
-4. Reselect your "base" folder in both "Get all items in processed base folder" and "Create output folder" nodes
-   
-![изображение](https://github.com/MrJimm/MemoAIzer/assets/5428408/cd5f5b98-b223-47fa-a3ef-e9f3b138f472)
+3. Re-select your Google Drive root foolder in the "Root folder" node
 
+![изображение](https://github.com/MrJimm/MemoAIzer/assets/5428408/bfc8f2d7-77f3-4e29-9363-fef6131f93c6)
 
-6. Reselect "raw" folder in "Get all items in input folder" node
-   
-![изображение](https://github.com/MrJimm/MemoAIzer/assets/5428408/c949cf55-7436-4a5b-b75c-e6731a02a02f)
-
-
-
-7. Launch the flow
+7. Launch the flow (hit "Active" button)
 
 ### 2.2 Managing text processing prompts
 You can find prompts for text processing inside OpenAI blocks (i.e. "Get keywords"). It is plain text, and I suggest to read it to understand how exactly it asks ChatGPT to process your text memos. You can change this prompts and add new branches with custom processing prompts. Though I plan to introduce a more convenient way to add custom text processing flows in further updates.
+
+![изображение](https://github.com/MrJimm/MemoAIzer/assets/5428408/a94b9ea8-c2aa-4ed8-8fc5-8e4ddd998884)
+
 
 ## How to upload to Drive 
 ### Manually
