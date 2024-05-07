@@ -39,7 +39,7 @@
       ],
       "credentials": {
         "openAiApi": {
-          "id": "",
+          "id": "EdDTHq6Hm6XVn47p",
           "name": "OpenAi account"
         }
       }
@@ -67,7 +67,7 @@
       ],
       "credentials": {
         "openAiApi": {
-          "id": "",
+          "id": "EdDTHq6Hm6XVn47p",
           "name": "OpenAi account"
         }
       }
@@ -95,7 +95,7 @@
       ],
       "credentials": {
         "openAiApi": {
-          "id": "",
+          "id": "EdDTHq6Hm6XVn47p",
           "name": "OpenAi account"
         }
       }
@@ -122,7 +122,7 @@
       ],
       "credentials": {
         "googleDriveOAuth2Api": {
-          "id": "",
+          "id": "JZG3EdgBt5WkZN0v",
           "name": "Google Drive account"
         }
       }
@@ -171,50 +171,13 @@
     },
     {
       "parameters": {
-        "pollTimes": {
-          "item": [
-            {
-              "mode": "everyMinute"
-            }
-          ]
-        },
-        "triggerOn": "specificFolder",
-        "folderToWatch": {
-          "__rl": true,
-          "value": "",
-          "mode": "list",
-          "cachedResultName": "raw",
-          "cachedResultUrl": ""
-        },
-        "event": "fileCreated",
-        "options": {}
-      },
-      "id": "dca84da8-bcf4-4e22-bc79-60d2ad6eb1d7",
-      "name": "Google Drive Trigger",
-      "type": "n8n-nodes-base.googleDriveTrigger",
-      "typeVersion": 1,
-      "position": [
-        -440,
-        -180
-      ],
-      "credentials": {
-        "googleDriveOAuth2Api": {
-          "id": "",
-          "name": "Google Drive account"
-        }
-      }
-    },
-    {
-      "parameters": {
         "resource": "fileFolder",
         "returnAll": true,
         "filter": {
           "folderId": {
             "__rl": true,
-            "value": "",
-            "mode": "list",
-            "cachedResultName": "base",
-            "cachedResultUrl": ""
+            "value": "={{ $('Text procbase folder essentials').item.json[\"text_procbase_folder_id\"] }}",
+            "mode": "id"
           },
           "whatToSearch": "folders"
         },
@@ -230,7 +193,7 @@
       ],
       "credentials": {
         "googleDriveOAuth2Api": {
-          "id": "",
+          "id": "JZG3EdgBt5WkZN0v",
           "name": "Google Drive account"
         }
       }
@@ -242,10 +205,8 @@
         "filter": {
           "folderId": {
             "__rl": true,
-            "value": "",
-            "mode": "list",
-            "cachedResultName": "raw",
-            "cachedResultUrl": ""
+            "value": "={{ $('Text raw folder essentials').item.json[\"text_raw_folder_id\"] }}",
+            "mode": "id"
           }
         },
         "options": {}
@@ -260,7 +221,7 @@
       ],
       "credentials": {
         "googleDriveOAuth2Api": {
-          "id": "",
+          "id": "JZG3EdgBt5WkZN0v",
           "name": "Google Drive account"
         }
       }
@@ -382,7 +343,7 @@
       ],
       "credentials": {
         "openAiApi": {
-          "id": "",
+          "id": "EdDTHq6Hm6XVn47p",
           "name": "OpenAi account"
         }
       }
@@ -398,10 +359,8 @@
         },
         "folderId": {
           "__rl": true,
-          "value": "",
-          "mode": "list",
-          "cachedResultName": "base",
-          "cachedResultUrl": ""
+          "value": "={{ $('Text procbase folder essentials').item.json[\"text_procbase_folder_id\"] }}",
+          "mode": "id"
         },
         "options": {}
       },
@@ -415,7 +374,7 @@
       ],
       "credentials": {
         "googleDriveOAuth2Api": {
-          "id": "",
+          "id": "JZG3EdgBt5WkZN0v",
           "name": "Google Drive account"
         }
       }
@@ -445,7 +404,7 @@
       ],
       "credentials": {
         "googleDriveOAuth2Api": {
-          "id": "",
+          "id": "JZG3EdgBt5WkZN0v",
           "name": "Google Drive account"
         }
       }
@@ -515,7 +474,7 @@
       ],
       "credentials": {
         "googleDriveOAuth2Api": {
-          "id": "",
+          "id": "JZG3EdgBt5WkZN0v",
           "name": "Google Drive account"
         }
       }
@@ -565,7 +524,7 @@
       ],
       "credentials": {
         "googleDriveOAuth2Api": {
-          "id": "",
+          "id": "JZG3EdgBt5WkZN0v",
           "name": "Google Drive account"
         }
       }
@@ -615,7 +574,7 @@
       ],
       "credentials": {
         "googleDriveOAuth2Api": {
-          "id": "",
+          "id": "JZG3EdgBt5WkZN0v",
           "name": "Google Drive account"
         }
       }
@@ -693,7 +652,7 @@
       ],
       "credentials": {
         "googleDriveOAuth2Api": {
-          "id": "",
+          "id": "JZG3EdgBt5WkZN0v",
           "name": "Google Drive account"
         }
       }
@@ -727,6 +686,572 @@
       "position": [
         2440,
         1040
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "fileFolder",
+        "queryString": "voice",
+        "returnAll": true,
+        "filter": {
+          "driveId": {
+            "mode": "list",
+            "value": "My Drive"
+          },
+          "folderId": {
+            "__rl": true,
+            "value": "",
+            "mode": "list",
+            "cachedResultName": "",
+            "cachedResultUrl": "https://drive.google.com/drive/folders/"
+          }
+        },
+        "options": {}
+      },
+      "id": "69efd075-cf17-4481-a6a5-6cd652154ce5",
+      "name": "Root folder",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -400,
+        -500
+      ],
+      "retryOnFail": false,
+      "alwaysOutputData": true,
+      "executeOnce": false,
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "JZG3EdgBt5WkZN0v",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fields": {
+          "values": [
+            {
+              "name": "root_folder_id",
+              "stringValue": "={{ $('Root folder').params[\"filter\"][\"folderId\"][\"value\"] }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "a7042ef7-2851-4e76-acdb-029772c84dee",
+      "name": "Root folder essentials",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.2,
+      "position": [
+        -220,
+        -500
+      ],
+      "executeOnce": true
+    },
+    {
+      "parameters": {
+        "resource": "fileFolder",
+        "queryString": "text",
+        "returnAll": true,
+        "filter": {
+          "folderId": {
+            "__rl": true,
+            "value": "={{ $('Root folder essentials').item.json[\"root_folder_id\"] }}",
+            "mode": "id"
+          }
+        },
+        "options": {}
+      },
+      "id": "1a625afb-af56-47eb-9604-72aae4bf2642",
+      "name": "Get text root folder",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -20,
+        -500
+      ],
+      "alwaysOutputData": true,
+      "executeOnce": true,
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "JZG3EdgBt5WkZN0v",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "feaa1460-0960-4b77-acc9-0926598bbc1b",
+              "leftValue": "={{ $json.id }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "11968f9d-aab4-4b4b-8657-9426b52ab91f",
+      "name": "If text root folder exists",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        160,
+        -500
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "folder",
+        "name": "text",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "={{ $('Root folder essentials').item.json[\"root_folder_id\"] }}",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "id": "46e7a693-d646-4fcc-8226-b41773873f55",
+      "name": "Create text root folder",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        340,
+        -640
+      ],
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "JZG3EdgBt5WkZN0v",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fields": {
+          "values": [
+            {
+              "name": "text_root_folder_id",
+              "stringValue": "={{ $json.id }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "3a96de3a-ff6d-4b9d-986a-1d02349853b7",
+      "name": "Text root folder id",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.2,
+      "position": [
+        520,
+        -500
+      ],
+      "executeOnce": true
+    },
+    {
+      "parameters": {
+        "resource": "fileFolder",
+        "queryString": "raw",
+        "returnAll": true,
+        "filter": {
+          "folderId": {
+            "__rl": true,
+            "value": "={{ $('Text root folder id').item.json[\"text_root_folder_id\"] }}",
+            "mode": "id"
+          }
+        },
+        "options": {}
+      },
+      "id": "ffe7448d-956d-42df-b0bb-9366c1283138",
+      "name": "Get text raw folder",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        720,
+        -500
+      ],
+      "alwaysOutputData": true,
+      "executeOnce": true,
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "JZG3EdgBt5WkZN0v",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "feaa1460-0960-4b77-acc9-0926598bbc1b",
+              "leftValue": "={{ $json.id }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "6b108247-c325-42b8-836b-260d77b8d0a8",
+      "name": "If text raw folder exists",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        920,
+        -500
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "folder",
+        "name": "raw",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "={{ $('Text root folder id').item.json[\"text_root_folder_id\"] }}",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "id": "0c9610b1-71ea-4cba-8724-1b978d6795e1",
+      "name": "Create text raw folder",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        1140,
+        -640
+      ],
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "JZG3EdgBt5WkZN0v",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fields": {
+          "values": [
+            {
+              "name": "text_raw_folder_id",
+              "stringValue": "={{ $json.id }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "31b40598-74c0-4c4e-a023-5864e0e64fc5",
+      "name": "Text raw folder essentials",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.2,
+      "position": [
+        1320,
+        -500
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "d21bdc7d-1b94-41e2-a013-e1a499743fc5",
+      "name": "When clicking \"Test workflow\"",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -640,
+        -360
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "fileFolder",
+        "queryString": "processed",
+        "returnAll": true,
+        "filter": {
+          "folderId": {
+            "__rl": true,
+            "value": "={{ $('Text root folder id').item.json[\"text_root_folder_id\"] }}",
+            "mode": "id"
+          }
+        },
+        "options": {}
+      },
+      "id": "53bde0a7-0be3-4ec9-9161-0ad9b2baa960",
+      "name": "Get text processed folder",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        1500,
+        -500
+      ],
+      "alwaysOutputData": true,
+      "executeOnce": true,
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "JZG3EdgBt5WkZN0v",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "folder",
+        "name": "processed",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "={{ $('Text root folder id').item.json[\"text_root_folder_id\"] }}",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "id": "c6b0992e-cf8a-46c2-a93e-faf2e2521ad2",
+      "name": "Create text processed folder",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        1900,
+        -640
+      ],
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "JZG3EdgBt5WkZN0v",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fields": {
+          "values": [
+            {
+              "name": "text_processed_folder_id",
+              "stringValue": "={{ $json.id }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "d9bdd519-e23a-4779-9b24-2497a66fe97b",
+      "name": "Text processed folder essentials",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.2,
+      "position": [
+        2100,
+        -520
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "fileFolder",
+        "queryString": "base",
+        "returnAll": true,
+        "filter": {
+          "folderId": {
+            "__rl": true,
+            "value": "={{ $('Text processed folder essentials').item.json[\"text_processed_folder_id\"] }}",
+            "mode": "id"
+          }
+        },
+        "options": {}
+      },
+      "id": "df8d5313-6d6c-4f78-9208-d2ad443725c7",
+      "name": "Get text procbase folder",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        2300,
+        -520
+      ],
+      "alwaysOutputData": true,
+      "executeOnce": true,
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "JZG3EdgBt5WkZN0v",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "feaa1460-0960-4b77-acc9-0926598bbc1b",
+              "leftValue": "={{ $json.id }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "3ea73235-6af5-4efb-b2fb-ff39f1257574",
+      "name": "If text processed folder exists",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        1700,
+        -500
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "feaa1460-0960-4b77-acc9-0926598bbc1b",
+              "leftValue": "={{ $json.id }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "e7d40c32-52e3-442f-92c8-95e5b22b032f",
+      "name": "If text procbase folder exists",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        2480,
+        -520
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "folder",
+        "name": "processed",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "={{ $('Text processed folder essentials').item.json[\"text_processed_folder_id\"] }}",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "id": "9ff7fe9b-459f-4063-8fd6-3478b8add1d7",
+      "name": "Create text procbase folder",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        2700,
+        -640
+      ],
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "JZG3EdgBt5WkZN0v",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fields": {
+          "values": [
+            {
+              "name": "text_procbase_folder_id",
+              "stringValue": "={{ $json.id }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "8db91b6a-4ce1-4900-84b1-9242f1a0d03e",
+      "name": "Text procbase folder essentials",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.2,
+      "position": [
+        2900,
+        -500
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "84b26954-0b1e-40b2-80d0-66ce6d64bf5e",
+      "name": "Buffer",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        -340,
+        -160
+      ]
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours"
+            }
+          ]
+        }
+      },
+      "id": "f7a98c3b-fdef-42e8-a0ac-5f5c94454b7a",
+      "name": "Schedule Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -640,
+        -640
       ]
     }
   ],
@@ -790,22 +1315,6 @@
         [
           {
             "node": "Download transcription",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Google Drive Trigger": {
-      "main": [
-        [
-          {
-            "node": "Get all items in processed base folder",
-            "type": "main",
-            "index": 0
-          },
-          {
-            "node": "Get all items in input folder",
             "type": "main",
             "index": 0
           }
@@ -1104,13 +1613,277 @@
           }
         ]
       ]
+    },
+    "Root folder": {
+      "main": [
+        [
+          {
+            "node": "Root folder essentials",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Root folder essentials": {
+      "main": [
+        [
+          {
+            "node": "Get text root folder",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get text root folder": {
+      "main": [
+        [
+          {
+            "node": "If text root folder exists",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If text root folder exists": {
+      "main": [
+        [
+          {
+            "node": "Text root folder id",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Create text root folder",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create text root folder": {
+      "main": [
+        [
+          {
+            "node": "Text root folder id",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Text root folder id": {
+      "main": [
+        [
+          {
+            "node": "Get text raw folder",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get text raw folder": {
+      "main": [
+        [
+          {
+            "node": "If text raw folder exists",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If text raw folder exists": {
+      "main": [
+        [
+          {
+            "node": "Text raw folder essentials",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Create text raw folder",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create text raw folder": {
+      "main": [
+        [
+          {
+            "node": "Text raw folder essentials",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When clicking \"Test workflow\"": {
+      "main": [
+        [
+          {
+            "node": "Root folder",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Text raw folder essentials": {
+      "main": [
+        [
+          {
+            "node": "Get text processed folder",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get text processed folder": {
+      "main": [
+        [
+          {
+            "node": "If text processed folder exists",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create text processed folder": {
+      "main": [
+        [
+          {
+            "node": "Text processed folder essentials",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Text processed folder essentials": {
+      "main": [
+        [
+          {
+            "node": "Get text procbase folder",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If text processed folder exists": {
+      "main": [
+        [
+          {
+            "node": "Text processed folder essentials",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Create text processed folder",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get text procbase folder": {
+      "main": [
+        [
+          {
+            "node": "If text procbase folder exists",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If text procbase folder exists": {
+      "main": [
+        [
+          {
+            "node": "Text procbase folder essentials",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Create text procbase folder",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create text procbase folder": {
+      "main": [
+        [
+          {
+            "node": "Text procbase folder essentials",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Text procbase folder essentials": {
+      "main": [
+        [
+          {
+            "node": "Buffer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Buffer": {
+      "main": [
+        [
+          {
+            "node": "Get all items in processed base folder",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Get all items in input folder",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Root folder",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
-  "active": false,
+  "active": true,
   "settings": {
     "executionOrder": "v1"
   },
-  "versionId": "363ea8e3-54f0-4b03-9a65-2c6243c12929",
+  "versionId": "2ae5b05b-977a-4a56-819c-8ea03492e4b2",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "beb9879bc8cb5f19791047ba677ad81dfc94de5ec373473f419d6c5d1657b0fd"
