@@ -4,7 +4,7 @@ It consists of N8N workflows and uses Google Drive to sync and store all process
 ![image_2024-05-08_00-01-19](https://github.com/MrJimm/MemoAIzer/assets/5428408/e590fd4b-351e-457b-8904-83868acf421d)
 
 # TL;DR
-1. Install n8n ([docker](https://docs.n8n.io/hosting/installation/docker/), see sections 0.1-0.2 for recommended parameters).
+1. Install n8n ([docker](https://docs.n8n.io/hosting/installation/docker/), see sections 0.1-0.2 for details).
 2. Import voice_memo_transcribe.json workflow from json file.
 3. Set up credentials for Google Drive and OpenAI nodes (see details at "Docs" tab of a node).
 4. Create a root folder on your Google Drive, where all data will be stored
@@ -27,11 +27,29 @@ NOTE: Since flows are triggered by a timer hourly, you can either run each flow 
 
 ## Part 0: Setup prerequisites
 ### 0.1 Install N8N
-Install N8N from the official website, or get official docker image from hub (seem easier way).
+Install N8N from the official website, or get official docker image from hub (seem easier way, see instruction https://docs.n8n.io/hosting/installation/docker/).
 
 Set N8N_PAYLOAD_SIZE_MAX env variable to some high value (123456 will be enough), so you can move large files in your N8N flow over the internet.
 
 If you use docker image - set this env variable for the container before you run it. Also don't forget to forward the port (default is 5678).
+
+#### 0.1.1 Instruction for Windows
+Here is step-by-step instruction for Windows installation with docker
+1. Install Docker for Windows from https://docs.docker.com/desktop/install/windows-install/
+2. Run Docker Desktop app
+3. Go to the searchbar at the top, enter "n8n"
+   
+      <img src="https://github.com/MrJimm/MemoAIzer/assets/5428408/a9aeb615-1192-4806-a98b-de6956552e1b" width="400">
+      
+5. Find n8n image from n8nio (the one with the most downloads), press "Pull"
+6. After the image is downloaded, press the "Run" button. You will see a manu
+7. Expand "Optional settings" and set value for N8N_PAYLOAD_SIZE_MAX as 1234. This variable sets max payload size in megabytes, helps to avoid an error when you try upload large audio files
+      (details on this env variable here https://docs.n8n.io/hosting/configuration/environment-variables/endpoints/)
+   
+      <img src="https://github.com/MrJimm/MemoAIzer/assets/5428408/6bdb5d88-8978-4368-8fda-c031fab5bd10" width="400">
+      
+9. Optionally you can set container name in the first field
+10. Hit "Run". After a few seconds N8N UI will be available in browser at http://localhost:5678/
 
 ### 0.2 Start N8N and import workflow
 Start N8N service/container and open web interface (the default is http://localhost:5678).
