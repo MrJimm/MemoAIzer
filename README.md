@@ -60,7 +60,7 @@ Then create a new workflow, press three dots button at right upper corner, selec
 Save the flow (also you can change its name, if you click on its name "My workflow" in the upper panel).
 
 ### 0.3 Create OpenAI and Google Drive credentials
-Open any Google Drive node (i.e. "New in general folder") and follow instructions on Docs tab to create credentials, that you can use to connect to your Google Drive account.
+In the imported Workflow open any Google Drive node (i.e. "New in general folder"), click on "Docs" tab, and follow instructions to create credentials, that you can use to connect to your Google Drive account.
 
 ![изображение](https://github.com/MrJimm/MemolAIzer/assets/5428408/3944f783-c4ae-4e89-9564-38a8bca25b0e)
 
