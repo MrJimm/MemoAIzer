@@ -64,6 +64,9 @@ In the imported Workflow open any Google Drive node (i.e. "New in general folder
 
 ![изображение](https://github.com/MrJimm/MemolAIzer/assets/5428408/3944f783-c4ae-4e89-9564-38a8bca25b0e)
 
+TIP: It can be a tricky process. Note, that you should create Credentials and Publish app on "OAuth consent screen"
+![изображение](https://github.com/user-attachments/assets/019eff5a-f121-4b68-97d0-6ab60d3c0f53)
+
 After you created Drive credentials, open each Google Drive node and choose it. Do the same for Whisper transcription node to create OpenAI API credentials.
 
 ### 0.4 Google Drive folders hierarchy ()
